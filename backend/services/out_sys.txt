@@ -1,0 +1,15 @@
+{
+  "name": "Washington Metropolitan Area Transit Authority",
+  "shortName": "wmata",
+  "systemType": "city",
+  "city": "Washington",
+  "state": "DC",
+  "active": true,
+  "lastActive": "2026-02-27T12:00:00.227Z",
+  "callAvg": 15.733333333333333,
+  "description": "Radio system for Washington Metropolitan Area Transit Authority",
+  "status": "",
+  "allowContact": true,
+  "clientCount": 2,
+  "screenName": null
+}

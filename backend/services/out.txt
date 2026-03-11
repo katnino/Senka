@@ -1,0 +1,6 @@
+Testing OpenMHZ undocumented API with Cloudscraper...
+Successfully spoofed OpenMHZ frontend. Found 457 active police/fire systems.
+Targeting System: Washington Metropolitan Area Transit Authority (wmata)
+Fetching recent bursts: https://api.openmhz.com/wmata/calls
+Intercepted 2 audio bursts.
+Scrape Exception: 0

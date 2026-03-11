@@ -1,0 +1,80 @@
+[NPR] A team of midlife cheerleaders in Ukraine refuses to let war defeat them
+  Matched: ukraine
+  Text: a team of midlife cheerleaders in ukraine refuses to let war defeat them ukrainian women in their 50s and 60s say they've embraced cheerleading as a way to cope with the extreme stress and anxiety of four years of russia's full-scale invasion.
+
+[NPR] Affected by the war in Ukraine, Germany works to recover its economy
+  Matched: ukraine
+  Text: affected by the war in ukraine, germany works to recover its economy four years after russia's full-scale invasion of ukraine, germany's economy has transformed, impacted by the effects of war.
+
+[NPR] Pakistan says there is 'open war' with Afghanistan after latest strikes
+  Matched: afghanistan
+  Text: pakistan says there is 'open war' with afghanistan after latest strikes pakistan's defense minister says there is "open war" on the afghan taliban government after tensions between the two countries flared.
+
+[NPR] Iran continues crackdown on anti-government protesters despite Trump's threat
+  Matched: iran
+  Text: iran continues crackdown on anti-government protesters despite trump's threat president trump set a red line for iran not to execute protesters, but dozens are being sentenced to death.
+
+[NPR] Pakistan's defense minister says that there is now 'open war' with Afghanistan after latest strikes
+  Matched: afghanistan
+  Text: pakistan's defense minister says that there is now 'open war' with afghanistan after latest strikes pakistan's defense minister said that his country ran out of "patience" and considers that there is now an "open war" with afghanistan, after both countries launched strikes following an afghan cross-border attack.
+
+[NPR] As Trump dismantles asylum programs, Russians and Ukrainians fear for future
+  Matched: ukraine
+  Text: as trump dismantles asylum programs, russians and ukrainians fear for future the trump administration has been sending asylum seekers from ukraine and russia back to a warzone. one family in minnesota says they fear for their lives.
+
+[NPR] Kyiv's elderly stay at home despite Russian attacks and power cuts
+  Matched: kyiv
+  Text: kyiv's elderly stay at home despite russian attacks and power cuts older residents of kyiv's many high-rises are learning to live with intermittent heat and electricity, cut off by russian attacks.
+
+[NPR] Is the U.S. headed toward a military conflict with Iran?
+  Matched: iran
+  Text: is the u.s. headed toward a military conflict with iran? <em>new york times</em> journalist david sanger discusses how we got here, the state of iran's nuclear weapons program, the likelihood of u.s. military force against iran and if trump's goal is regime change.
+
+[NPR] U.S. and Iran to hold nuclear talks. And, Harvard professor resigns over Epstein ties
+  Matched: iran
+  Text: u.s. and iran to hold nuclear talks. and, harvard professor resigns over epstein ties u.s. and iranian officials are set to meet today in geneva to discuss tehran's nuclear program. and, harvard professor larry summers is resigning over ties to convicted sex offender jeffrey epstein.
+
+[NPR] Former national security adviser John Bolton discusses risks of Iran regime change
+  Matched: iran
+  Text: former national security adviser john bolton discusses risks of iran regime change npr's steve inskeep talks with john bolton, a national security advisor in president trump's first term, about the prospect and risks of pursuing regime change in iran.
+
+[BBC] Hillary Clinton tells House panel she 'had no idea' of Epstein's crimes
+  Matched: None
+  Text: hillary clinton tells house panel she 'had no idea' of epstein's crimes the ex-secretary of state called for president trump to be questioned under oath about his past association with the sex offender.
+
+[BBC] Why Trump means the Cuban Revolution faces its biggest threat yet
+  Matched: None
+  Text: why trump means the cuban revolution faces its biggest threat yet will a worsening internal crisis create the conditions for the cuban revolution to unravel from within?
+
+[BBC] China removes nine military officials ahead of key political meeting
+  Matched: china
+  Text: china removes nine military officials ahead of key political meeting no official reason for the removal was given, but it comes ahead of the country's key two sessions meeting.
+
+[BBC] Jack Dorsey's Block cuts thousands of jobs as it embraces AI
+  Matched: None
+  Text: jack dorsey's block cuts thousands of jobs as it embraces ai the twitter co-founder says he believes the majority of firms will make similar changes "within the next year."
+
+[BBC] Paramount set for $111bn Warner Bros takeover after Netflix drops bid
+  Matched: None
+  Text: paramount set for $111bn warner bros takeover after netflix drops bid netflix's decision to back down from the bidding war clears the path for paramount to win the takeover battle.
+
+[BBC] Epstein tried to buy a palace in Morocco days before his arrest in 2019
+  Matched: None
+  Text: epstein tried to buy a palace in morocco days before his arrest in 2019 the disgraced financier was in talks to buy luxury abode bin ennakhi - but the purchase was never completed.
+
+[BBC] American citizen among those killed in Cuba boat shooting, US official says
+  Matched:  us 
+  Text: american citizen among those killed in cuba boat shooting, us official says cuba has accused those on board of planning "an infiltration with terrorist aims” and firing first.
+
+[BBC] Danish PM calls snap election with Greenland issue centre-stage
+  Matched: None
+  Text: danish pm calls snap election with greenland issue centre-stage the issue of greenland, which donald trump wants to annex, is likely to dominate the election campaign.
+
+[BBC] US-Iran talks end after 'significant progress', mediator says
+  Matched: iran
+  Text: us-iran talks end after 'significant progress', mediator says the indirect negotiations in geneva are seen as a last-ditch effort, but the chances of a nuclear agreement are unclear.
+
+[BBC] Kenyan charged with luring young men to fight for Russia in Ukraine
+  Matched: ukraine
+  Text: kenyan charged with luring young men to fight for russia in ukraine a total of 1,000 kenyans have reportedly been recruited to fight for russia in its war against ukraine.
+
