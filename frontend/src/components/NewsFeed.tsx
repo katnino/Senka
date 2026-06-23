@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 import React, { useEffect, useRef } from 'react';
 import WikiImage from '@/components/WikiImage';
+import { useUiLanguage } from '@/lib/uiLanguage';
 
 // Format time from pubish string "Tue, 24 Feb 2026 15:30:00 GMT" to "15:30"
 function formatTime(pubDate: string) {
@@ -121,6 +122,7 @@ const VESSEL_TYPE_WIKI: Record<string, string> = {
 };
 
 function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoading }: { data: any, selectedEntity?: { type: string, id: string | number, name?: string, callsign?: string, media_url?: string, extra?: any } | null, regionDossier?: any, regionDossierLoading?: boolean }) {
+    const { t } = useUiLanguage();
     const [isMinimized, setIsMinimized] = useState(false);
     const [expandedIndexes, setExpandedIndexes] = useState<number[]>([]);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -164,43 +166,43 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 className="w-full bg-black/60 backdrop-blur-md border border-emerald-800 rounded-xl flex flex-col z-10 font-mono shadow-[0_4px_30px_rgba(0,255,128,0.2)] pointer-events-auto overflow-hidden flex-shrink-0"
             >
                 <div className="p-3 border-b border-emerald-500/30 bg-emerald-950/40 flex justify-between items-center">
-                    <h2 className="text-xs tracking-widest font-bold text-emerald-400">REGION DOSSIER</h2>
+                    <h2 className="text-xs tracking-widest font-bold text-emerald-400">{t("ui.regionDossier")}</h2>
                     <span className="text-[8px] text-gray-500">
                         {selectedEntity.extra ? `${selectedEntity.extra.lat.toFixed(3)}, ${selectedEntity.extra.lng.toFixed(3)}` : ''}
                     </span>
                 </div>
                 {regionDossierLoading ? (
                     <div className="p-6 flex items-center justify-center">
-                        <span className="text-emerald-400 text-[10px] font-mono animate-pulse tracking-widest">COMPILING INTELLIGENCE...</span>
+                        <span className="text-emerald-400 text-[10px] font-mono animate-pulse tracking-widest">{t("ui.compilingIntelligence")}</span>
                     </div>
                 ) : d && !d.error ? (
                     <div className="p-3 flex flex-col gap-1.5 max-h-[500px] overflow-y-auto styled-scrollbar text-[10px]">
                         {/* COUNTRY */}
-                        <div className="text-[9px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1">COUNTRY LEVEL {d.country?.flag_emoji || ''}</div>
-                        <div className="flex justify-between"><span className="text-gray-500">COUNTRY</span><span className="text-white font-bold">{d.country?.name}</span></div>
+                        <div className="text-[9px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1">{t("ui.countryLevel")} {d.country?.flag_emoji || ''}</div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.country")}</span><span className="text-white font-bold">{d.country?.name}</span></div>
                         {d.country?.official_name && d.country.official_name !== d.country.name && (
-                            <div className="flex justify-between"><span className="text-gray-500">OFFICIAL</span><span className="text-gray-300 text-right max-w-[180px]">{d.country.official_name}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-500">{t("ui.official")}</span><span className="text-gray-300 text-right max-w-[180px]">{d.country.official_name}</span></div>
                         )}
-                        <div className="flex justify-between"><span className="text-gray-500">LEADER</span><span className="text-emerald-400 font-bold">{d.country?.leader}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">GOVERNMENT</span><span className="text-white font-bold text-right max-w-[180px]">{d.country?.government_type}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">POPULATION</span><span className="text-white font-bold">{d.country?.population?.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">CAPITAL</span><span className="text-white font-bold">{d.country?.capital}</span></div>
-                        <div className="flex justify-between"><span className="text-gray-500">LANGUAGES</span><span className="text-white text-right max-w-[180px]">{d.country?.languages?.join(', ')}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.leader")}</span><span className="text-emerald-400 font-bold">{d.country?.leader}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.government")}</span><span className="text-white font-bold text-right max-w-[180px]">{d.country?.government_type}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.population")}</span><span className="text-white font-bold">{d.country?.population?.toLocaleString()}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.capital")}</span><span className="text-white font-bold">{d.country?.capital}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.languages")}</span><span className="text-white text-right max-w-[180px]">{d.country?.languages?.join(', ')}</span></div>
                         {d.country?.currencies?.length > 0 && (
-                            <div className="flex justify-between"><span className="text-gray-500">CURRENCY</span><span className="text-white text-right max-w-[180px]">{d.country.currencies.join(', ')}</span></div>
+                            <div className="flex justify-between"><span className="text-gray-500">{t("ui.currency")}</span><span className="text-white text-right max-w-[180px]">{d.country.currencies.join(', ')}</span></div>
                         )}
-                        <div className="flex justify-between"><span className="text-gray-500">REGION</span><span className="text-white">{d.country?.subregion || d.country?.region}</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500">{t("ui.region")}</span><span className="text-white">{d.country?.subregion || d.country?.region}</span></div>
                         {d.country?.area_km2 > 0 && (
-                            <div className="flex justify-between"><span className="text-gray-500">AREA</span><span className="text-white">{d.country.area_km2.toLocaleString()} km²</span></div>
+                            <div className="flex justify-between"><span className="text-gray-500">{t("ui.area")}</span><span className="text-white">{d.country.area_km2.toLocaleString()} km²</span></div>
                         )}
 
                         {/* LOCAL */}
                         {(d.local?.name || d.local?.state) && (
                             <>
-                                <div className="text-[9px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1 mt-2">LOCAL LEVEL</div>
-                                {d.local.name && <div className="flex justify-between"><span className="text-gray-500">LOCALITY</span><span className="text-white font-bold">{d.local.name}</span></div>}
-                                {d.local.state && <div className="flex justify-between"><span className="text-gray-500">STATE/PROVINCE</span><span className="text-white font-bold">{d.local.state}</span></div>}
-                                {d.local.description && <div className="flex justify-between"><span className="text-gray-500">TYPE</span><span className="text-gray-300">{d.local.description}</span></div>}
+                                <div className="text-[9px] text-emerald-500 tracking-widest font-bold border-b border-emerald-900/50 pb-1 mt-2">{t("ui.localLevel")}</div>
+                                {d.local.name && <div className="flex justify-between"><span className="text-gray-500">{t("ui.locality")}</span><span className="text-white font-bold">{d.local.name}</span></div>}
+                                {d.local.state && <div className="flex justify-between"><span className="text-gray-500">{t("ui.stateProvince")}</span><span className="text-white font-bold">{d.local.state}</span></div>}
+                                {d.local.description && <div className="flex justify-between"><span className="text-gray-500">{t("ui.type")}</span><span className="text-gray-300">{d.local.description}</span></div>}
                                 {d.local.summary && (
                                     <div className="mt-1 p-2 bg-black/60 border border-emerald-800/50 rounded text-[9px] text-gray-300 leading-relaxed">
                                         <span className="text-emerald-400 font-bold">&gt;_ INTEL: </span>
@@ -213,7 +215,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 ) : d?.error ? (
                     <div className="p-4 text-gray-400 text-[10px]">{d.error}</div>
                 ) : (
-                    <div className="p-4 text-red-400 text-[10px]">INTEL UNAVAILABLE</div>
+                    <div className="p-4 text-red-400 text-[10px]">{t("ui.intelUnavailable")}</div>
                 )}
             </motion.div>
         );
@@ -222,7 +224,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
     if (selectedEntity?.type === 'tracked_flight') {
         const flight = data?.tracked_flights?.[selectedEntity.id as number];
         if (flight) {
-            const callsign = flight.callsign || "UNKNOWN";
+            const callsign = flight.callsign || t("ui.unknown");
             const alertColorMap: Record<string, string> = {
                 'pink': 'text-pink-400', 'red': 'text-red-400',
                 'darkblue': 'text-blue-400', 'white': 'text-white'
@@ -249,14 +251,14 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className={`p-3 border-b ${borderColor} ${bgColor} flex justify-between items-center`}>
                         <h2 className={`text-xs tracking-widest font-bold ${headerColor} flex items-center gap-2`}>
-                            ⚠ TRACKED AIRCRAFT — {flight.alert_category || "ALERT"}
+                            ⚠ {t("ui.trackedAircraft")} — {flight.alert_category || t("ui.alert")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">TRK: {callsign}</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">OPERATOR</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.operator")}</span>
                             {flight.alert_operator && flight.alert_operator !== "UNKNOWN" ? (
                                 <a
                                     href={`https://en.wikipedia.org/wiki/${encodeURIComponent(flight.alert_operator.replace(/ /g, '_'))}`}
@@ -268,7 +270,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                                     {flight.alert_operator}
                                 </a>
                             ) : (
-                                <span className={`text-xs font-bold ${headerColor}`}>UNKNOWN</span>
+                                <span className={`text-xs font-bold ${headerColor}`}>{t("ui.unknown")}</span>
                             )}
                         </div>
                         {/* Owner/Operator Wikipedia photo */}
@@ -301,66 +303,66 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                             </div>
                         )}
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">CATEGORY</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.category")}</span>
                             <span className={`text-xs font-bold ${headerColor}`}>{flight.alert_category || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">AIRCRAFT</span>
-                            <span className="text-white text-xs font-bold">{flight.alert_type || flight.model || "UNKNOWN"}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.aircraft")}</span>
+                            <span className="text-white text-xs font-bold">{flight.alert_type || flight.model || t("ui.unknown")}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">REGISTRATION</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.registration")}</span>
                             <span className="text-white text-xs font-bold">{flight.registration || "N/A"}</span>
                         </div>
                         {flight.alert_tag1 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">INTEL TAG</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.intelTag")}</span>
                                 <span className={`text-xs font-bold ${headerColor}`}>{flight.alert_tag1}</span>
                             </div>
                         )}
                         {flight.alert_tag2 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">SECONDARY</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.secondary")}</span>
                                 <span className="text-white text-xs font-bold">{flight.alert_tag2}</span>
                             </div>
                         )}
                         {flight.alert_tag3 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">DETAIL</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.detail")}</span>
                                 <span className="text-gray-400 text-xs">{flight.alert_tag3}</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">ALTITUDE</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.altitude")}</span>
                             <span className="text-white text-xs font-bold">{(Math.round((flight.alt || 0) / 0.3048)).toLocaleString()} ft</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">GROUND SPEED</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.groundSpeed")}</span>
                             <span className="text-white text-xs font-bold">{flight.speed_knots ? `${flight.speed_knots} kts` : 'N/A'}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">HEADING</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.heading")}</span>
                             <span className="text-white text-xs font-bold">{Math.round(flight.heading || 0)}°</span>
                         </div>
                         {flight.squawk && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">SQUAWK</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.squawk")}</span>
                                 <span className={`text-xs font-bold ${flight.squawk === '7700' ? 'text-red-400 animate-pulse' : flight.squawk === '7600' ? 'text-yellow-400' : 'text-white'}`}>{flight.squawk}{flight.squawk === '7700' ? ' ⚠ EMERGENCY' : flight.squawk === '7600' ? ' COMMS LOST' : ''}</span>
                             </div>
                         )}
                         {flight.alert_link && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">REFERENCE</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.reference")}</span>
                                 <a href={flight.alert_link} target="_blank" rel="noreferrer" className={`text-xs font-bold underline ${headerColor} hover:opacity-80`}>
-                                    View Intel Source
+                                    {t("ui.viewIntelSource")}
                                 </a>
                             </div>
                         )}
                         {flight.icao24 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">FLIGHT RECORD</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.flightRecord")}</span>
                                 <a href={`https://adsb.lol/?icao=${flight.icao24}`} target="_blank" rel="noreferrer" className={`${headerColor} hover:opacity-80 text-xs font-bold underline`}>
-                                    View History Log
+                                    {t("ui.viewHistoryLog")}
                                 </a>
                             </div>
                         )}
@@ -378,15 +380,15 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
         const flight = flightsList?.[selectedEntity.id as number];
 
         if (flight) {
-            const callsign = flight.callsign || "UNKNOWN";
-            let airline = "UNKNOWN";
+            const callsign = flight.callsign || t("ui.unknown");
+            let airline = t("ui.unknown");
 
             if (selectedEntity.type === 'military_flight') {
-                airline = "MILITARY ASSET";
+                airline = t("ui.militaryAsset");
             } else if (selectedEntity.type === 'private_jet') {
-                airline = "PRIVATE JET";
+                airline = t("ui.privateJet");
             } else if (selectedEntity.type === 'private_flight') {
-                airline = "PRIVATE / GA";
+                airline = t("ui.privateGa");
             } else if (flight.airline_code) {
                 // Use the airline code resolved from adsb.lol routeset API
                 const codeMap: Record<string, string> = {
@@ -402,8 +404,8 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                     "QTR": "QATAR AIRWAYS", "ETD": "ETIHAD AIRWAYS", "SAS": "SAS SCANDINAVIAN"
                 };
                 airline = codeMap[flight.airline_code] || flight.airline_code;
-            } else if (callsign !== "UNKNOWN") {
-                airline = "COMMERCIAL FLIGHT";
+            } else if (callsign !== t("ui.unknown")) {
+                airline = t("ui.commercialFlight");
             }
 
             return (
@@ -415,23 +417,23 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className="p-3 border-b border-cyan-500/30 bg-cyan-950/40 flex justify-between items-center">
                         <h2 className={`text-xs tracking-widest font-bold ${selectedEntity.type === 'military_flight' ? 'text-red-400' : selectedEntity.type === 'private_flight' ? 'text-orange-400' : selectedEntity.type === 'private_jet' ? 'text-purple-400' : 'text-cyan-400'} flex items-center gap-2`}>
-                            {selectedEntity.type === 'military_flight' ? "MILITARY BOGEY INTERCEPT" : selectedEntity.type === 'private_flight' ? "PRIVATE TRANSPONDER" : selectedEntity.type === 'private_jet' ? "PRIVATE JET TRANSPONDER" : "COMMERCIAL TRANSPONDER"}
+                            {selectedEntity.type === 'military_flight' ? t("ui.militaryBogeyIntercept") : selectedEntity.type === 'private_flight' ? t("ui.privateTransponder") : selectedEntity.type === 'private_jet' ? t("ui.privateJetTransponder") : t("ui.commercialTransponder")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">TRK: {callsign}</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">OPERATOR</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.operator")}</span>
                             <span className="text-white text-xs font-bold">{airline}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">REGISTRATION</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.registration")}</span>
                             <span className="text-white text-xs font-bold">{flight.registration || "N/A"}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">AIRCRAFT MODEL</span>
-                            <span className="text-white text-xs font-bold">{flight.model || "UNKNOWN"}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.aircraft")} MODEL</span>
+                            <span className="text-white text-xs font-bold">{flight.model || t("ui.unknown")}</span>
                         </div>
                         {/* Aircraft photo + Wikipedia link */}
                         {(aircraftImgUrl || aircraftImgLoading || aircraftWikiUrl) && (
@@ -458,32 +460,32 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                             </div>
                         )}
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">ALTITUDE</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.altitude")}</span>
                             <span className="text-white text-xs font-bold">{(Math.round((flight.alt || 0) / 0.3048)).toLocaleString()} ft</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">GROUND SPEED</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.groundSpeed")}</span>
                             <span className="text-white text-xs font-bold">{flight.speed_knots ? `${flight.speed_knots} kts` : 'N/A'}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">HEADING</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.heading")}</span>
                             <span className="text-white text-xs font-bold">{Math.round(flight.heading || 0)}°</span>
                         </div>
                         {flight.squawk && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">SQUAWK</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.squawk")}</span>
                                 <span className={`text-xs font-bold ${flight.squawk === '7700' ? 'text-red-400 animate-pulse' : flight.squawk === '7600' ? 'text-yellow-400' : 'text-white'}`}>{flight.squawk}{flight.squawk === '7700' ? ' ⚠ EMERGENCY' : flight.squawk === '7600' ? ' COMMS LOST' : ''}</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">ROUTE</span>
-                            <span className="text-cyan-400 text-xs font-bold">{flight.origin_name !== "UNKNOWN" ? `[${flight.origin_name}] → [${flight.dest_name}]` : "UNKNOWN"}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.route")}</span>
+                            <span className="text-cyan-400 text-xs font-bold">{flight.origin_name !== "UNKNOWN" ? `[${flight.origin_name}] → [${flight.dest_name}]` : t("ui.unknown")}</span>
                         </div>
                         {flight.icao24 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">FLIGHT RECORD</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.flightRecord")}</span>
                                 <a href={`https://adsb.lol/?icao=${flight.icao24}`} target="_blank" rel="noreferrer" className="text-cyan-400 hover:text-cyan-300 text-xs font-bold underline">
-                                    View History Log
+                                    {t("ui.viewHistoryLog")}
                                 </a>
                             </div>
                         )}
@@ -497,14 +499,14 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
         const ship = data?.ships?.[selectedEntity.id as number];
         if (ship) {
             const vesselTypeLabels: Record<string, string> = {
-                'tanker': 'TANKER',
-                'cargo': 'CARGO VESSEL',
-                'passenger': 'PASSENGER / CRUISE',
-                'yacht': 'PRIVATE YACHT',
-                'military_vessel': 'MILITARY VESSEL',
-                'carrier': 'AIRCRAFT CARRIER',
+                'tanker': t("ui.tanker"),
+                'cargo': t("ui.cargoVessel"),
+                'passenger': t("ui.passengerCruise"),
+                'yacht': t("ui.privateYacht"),
+                'military_vessel': t("ui.militaryVessel"),
+                'carrier': t("ui.aircraftCarrier"),
             };
-            const typeLabel = vesselTypeLabels[ship.type] || ship.type?.toUpperCase() || 'VESSEL';
+            const typeLabel = vesselTypeLabels[ship.type] || ship.type?.toUpperCase() || t("ui.vessel");
 
             const headerColorMap: Record<string, string> = {
                 'tanker': 'text-red-400',
@@ -517,14 +519,14 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
             const headerColor = headerColorMap[ship.type] || 'text-gray-400';
 
             const headerTitleMap: Record<string, string> = {
-                'tanker': 'AIS TANKER INTERCEPT',
-                'cargo': 'AIS CARGO INTERCEPT',
-                'passenger': 'AIS PASSENGER VESSEL',
-                'yacht': 'AIS YACHT SIGNAL',
-                'military_vessel': 'AIS MILITARY VESSEL',
-                'carrier': 'CARRIER STRIKE GROUP',
+                'tanker': t("ui.aisTankerIntercept"),
+                'cargo': t("ui.aisCargoIntercept"),
+                'passenger': t("ui.aisPassengerVessel"),
+                'yacht': t("ui.aisYachtSignal"),
+                'military_vessel': t("ui.aisMilitaryVessel"),
+                'carrier': t("ui.carrierStrikeGroup"),
             };
-            const headerTitle = headerTitleMap[ship.type] || 'AIS VESSEL SIGNAL';
+            const headerTitle = headerTitleMap[ship.type] || t("ui.aisVesselSignal");
 
             return (
                 <motion.div
@@ -542,46 +544,46 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">VESSEL NAME</span>
-                            <span className="text-white text-xs font-bold text-right ml-4">{ship.name || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.vesselName")}</span>
+                            <span className="text-white text-xs font-bold text-right ml-4">{ship.name || t("ui.unknown")}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">VESSEL TYPE</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.vesselType")}</span>
                             <span className={`text-xs font-bold ${headerColor}`}>{typeLabel}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">FLAG STATE</span>
-                            <span className="text-white text-xs font-bold">{ship.country || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.flagState")}</span>
+                            <span className="text-white text-xs font-bold">{ship.country || t("ui.unknown")}</span>
                         </div>
                         {ship.callsign && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">CALLSIGN</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.callsign")}</span>
                                 <span className="text-white text-xs font-bold">{ship.callsign}</span>
                             </div>
                         )}
                         {ship.imo > 0 && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">IMO NUMBER</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.imoNumber")}</span>
                                 <span className="text-white text-xs font-bold">{ship.imo}</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">DESTINATION</span>
-                            <span className={`text-xs font-bold ${ship.destination && ship.destination !== 'UNKNOWN' ? 'text-cyan-400' : 'text-orange-400'}`}>{ship.destination || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.destination")}</span>
+                            <span className={`text-xs font-bold ${ship.destination && ship.destination !== "UNKNOWN" ? 'text-cyan-400' : 'text-orange-400'}`}>{ship.destination || t("ui.unknown")}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">SPEED (SOG)</span>
-                            <span className="text-white text-xs font-bold">{ship.type === 'carrier' ? 'UNKNOWN' : `${ship.sog || 0} kts`}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.speedSog")}</span>
+                            <span className="text-white text-xs font-bold">{ship.type === 'carrier' ? t("ui.unknown") : `${ship.sog || 0} kts`}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">COURSE (COG)</span>
-                            <span className="text-white text-xs font-bold">{ship.type === 'carrier' ? 'UNKNOWN' : `${Math.round(ship.cog || 0)}°`}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.courseCog")}</span>
+                            <span className="text-white text-xs font-bold">{ship.type === 'carrier' ? t("ui.unknown") : `${Math.round(ship.cog || 0)}°`}</span>
                         </div>
                         {ship.mmsi && (
                             <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                                <span className="text-gray-500 text-[10px]">VESSEL RECORD</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.vesselRecord")}</span>
                                 <a href={`https://www.marinetraffic.com/en/ais/details/ships/mmsi:${ship.mmsi}`} target="_blank" rel="noreferrer" className="text-cyan-400 hover:text-cyan-300 text-xs font-bold underline">
-                                    View on MarineTraffic
+                                    {t("ui.viewOnMarineTraffic") ?? "View on MarineTraffic"}
                                 </a>
                             </div>
                         )}
@@ -615,25 +617,25 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className="p-3 border-b border-orange-500/30 bg-orange-950/40 flex justify-between items-center">
                         <h2 className="text-xs tracking-widest font-bold text-orange-400 flex items-center gap-2">
-                            <AlertTriangle size={14} className="text-orange-400" /> MILITARY INCIDENT CLUSTER
+                            <AlertTriangle size={14} className="text-orange-400" /> {t("ui.militaryIncidentCluster")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">ID: {selectedEntity.id}</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">LOCATION</span>
-                            <span className="text-white text-xs font-bold text-right ml-4">{props.name || 'UNKNOWN REGION'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.location")}</span>
+                            <span className="text-white text-xs font-bold text-right ml-4">{props.name || t("ui.unknownRegion")}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">ARTICLE COUNT</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.articleCount")}</span>
                             <span className="text-orange-400 text-xs font-bold">{props.count || 1}</span>
                         </div>
                         <div className="flex flex-col gap-2 mt-2">
-                            <span className="text-gray-500 text-[10px]">LATEST REPORTS:</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.latestReports")}</span>
                             <div
                                 className="text-white text-xs whitespace-normal [&_a]:text-orange-400 [&_a]:underline hover:[&_a]:text-orange-300 [&_br]:mb-2"
-                                dangerouslySetInnerHTML={{ __html: props.html || 'No articles available.' }}
+                                dangerouslySetInnerHTML={{ __html: props.html || t("ui.noArticlesAvailable") }}
                             />
                         </div>
                     </div>
@@ -654,29 +656,29 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className="p-3 border-b border-yellow-500/30 bg-yellow-950/40 flex justify-between items-center">
                         <h2 className="text-xs tracking-widest font-bold text-yellow-400 flex items-center gap-2">
-                            <AlertTriangle size={14} className="text-yellow-400" /> REGIONAL TACTICAL EVENT
+                            <AlertTriangle size={14} className="text-yellow-400" /> {t("ui.regionalTacticalEvent")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">ID: {item.id}</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">REGION</span>
-                            <span className="text-white text-xs font-bold text-right ml-4">{item.region || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.region")}</span>
+                            <span className="text-white text-xs font-bold text-right ml-4">{item.region || t("ui.unknown")}</span>
                         </div>
                         <div className="flex flex-col gap-2 border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">DESCRIPTION</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.description")}</span>
                             <span className="text-yellow-400 text-xs font-bold leading-tight">{item.title}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2 mt-2">
-                            <span className="text-gray-500 text-[10px]">REPORTED TIME</span>
-                            <span className="text-white text-xs font-bold">{item.timestamp || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.reportedTime")}</span>
+                            <span className="text-white text-xs font-bold">{item.timestamp || t("ui.unknown")}</span>
                         </div>
                         {item.link && (
                             <div className="flex justify-between items-center pb-2 mt-2">
-                                <span className="text-gray-500 text-[10px]">SOURCE</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.source")}</span>
                                 <a href={item.link} target="_blank" rel="noreferrer" className="text-yellow-400 hover:text-yellow-300 text-xs font-bold underline">
-                                    View Liveuamap Report
+                                    {t("ui.viewLiveuamapReport")}
                                 </a>
                             </div>
                         )}
@@ -698,18 +700,18 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className="p-3 border-b border-red-500/30 bg-red-950/40 flex justify-between items-center">
                         <h2 className="text-xs tracking-widest font-bold text-red-400 flex items-center gap-2">
-                            <AlertTriangle size={14} className="text-red-400" /> THREAT INTERCEPT
+                            <AlertTriangle size={14} className="text-red-400" /> {t("ui.threatIntercept")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">LVL: {item.risk_score}/10</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">SOURCE</span>
-                            <span className="text-white text-xs font-bold text-right ml-4">{item.source || 'UNKNOWN'}</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.source")}</span>
+                            <span className="text-white text-xs font-bold text-right ml-4">{item.source || t("ui.unknown")}</span>
                         </div>
                         <div className="flex flex-col gap-2 border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">HEADLINE</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.headline")}</span>
                             <span className="text-red-400 text-xs font-bold leading-tight">{item.title}</span>
                         </div>
                         {item.machine_assessment && (
@@ -721,9 +723,9 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                         )}
                         {item.link && (
                             <div className="flex justify-between items-center pb-2 mt-2">
-                                <span className="text-gray-500 text-[10px]">REFERENCE</span>
+                                <span className="text-gray-500 text-[10px]">{t("ui.reference")}</span>
                                 <a href={item.link} target="_blank" rel="noreferrer" className="text-red-400 hover:text-red-300 text-xs font-bold underline">
-                                    View Source Article
+                                    {t("ui.viewSourceArticle")}
                                 </a>
                             </div>
                         )}
@@ -745,23 +747,23 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                 >
                     <div className="p-3 border-b border-cyan-500/30 bg-cyan-950/40 flex justify-between items-center">
                         <h2 className="text-xs tracking-widest font-bold text-cyan-400 flex items-center gap-2">
-                            AERONAUTICAL HUB
+                            {t("ui.aeronauticalHub")}
                         </h2>
                         <span className="text-[10px] text-gray-500 font-mono">IATA: {apt.iata}</span>
                     </div>
 
                     <div className="p-4 flex flex-col gap-3">
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">FACILITY NAME</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.facilityName")}</span>
                             <span className="text-white text-[10px] font-bold text-right ml-4 break-words">{apt.name}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">COORDINATES</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.coordinates")}</span>
                             <span className="text-white text-xs font-bold">{apt.lat.toFixed(4)}, {apt.lng.toFixed(4)}</span>
                         </div>
                         <div className="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <span className="text-gray-500 text-[10px]">STATUS</span>
-                            <span className="text-green-400 animate-pulse text-xs font-bold">OPERATIONAL</span>
+                            <span className="text-gray-500 text-[10px]">{t("ui.status")}</span>
+                            <span className="text-green-400 animate-pulse text-xs font-bold">{t("ui.operational")}</span>
                         </div>
                     </div>
                 </motion.div>
@@ -854,7 +856,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                     </div>
                 </div>
                 <div className="p-3 bg-black/40 text-[9px] text-cyan-500/70 font-mono tracking-widest flex justify-between items-center">
-                    <span>{selectedEntity.name?.toUpperCase() || 'UNKNOWN MOUNT'}</span>
+                            <span>{selectedEntity.name?.toUpperCase() || t("ui.unknownMount")}</span>
                     <span className="text-red-500 text-right">
                         {selectedEntity.extra?.last_updated
                             ? new Date(selectedEntity.extra.last_updated + 'Z').toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false, timeZoneName: 'short' })
@@ -878,7 +880,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
             >
                 <div className="flex justify-between items-center relative z-10">
                     <h2 className="text-xs tracking-widest font-bold text-cyan-400 flex items-center gap-2">
-                        <AlertTriangle size={14} /> GLOBAL THREAT INTERCEPT
+                        <AlertTriangle size={14} /> {t("ui.globalThreatIntercept")}
                     </h2>
                     <button className="text-cyan-500 hover:text-white transition-colors">
                         {isMinimized ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
@@ -893,8 +895,8 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                             exit={{ height: 0, opacity: 0 }}
                             className="text-[9px] text-cyan-500/80 mt-1 flex items-center justify-between font-bold relative z-10"
                         >
-                            <span className="px-1 border border-cyan-500/30">SYS.STATUS: MONITORING</span>
-                            <span className="flex items-center gap-1"><Clock size={10} /> {data?.last_updated ? formatTime(data.last_updated) : "SCANNING"}</span>
+                            <span className="px-1 border border-cyan-500/30">SYS.STATUS: {t("ui.operational")}</span>
+                            <span className="flex items-center gap-1"><Clock size={10} /> {data?.last_updated ? formatTime(data.last_updated) : t("ui.scanning")}</span>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -964,7 +966,7 @@ function NewsFeedInner({ data, selectedEntity, regionDossier, regionDossierLoadi
                                         <div className="flex items-center gap-2">
                                             {item.cluster_count > 1 && (
                                                 <button onClick={() => toggleExpand(idx)} className="text-[8px] font-bold text-cyan-500 bg-cyan-950/50 hover:text-white hover:bg-cyan-900 border border-cyan-500/30 px-1.5 py-0.5 rounded-sm transition-colors cursor-pointer">
-                                                    {isExpanded ? '[- COLLAPSE]' : `[+${item.cluster_count - 1} SOURCES]`}
+                                                    {isExpanded ? t("ui.collapse") : `[+${item.cluster_count - 1} ${t("ui.sources")}]`}
                                                 </button>
                                             )}
                                             {item.coords && (

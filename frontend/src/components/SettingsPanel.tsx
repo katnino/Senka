@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, Eye, EyeOff, Copy, Check, ExternalLink, Key, Shield, X, Save, ChevronDown, ChevronUp } from "lucide-react";
+import { useUiLanguage } from "@/lib/uiLanguage";
 
 interface ApiEntry {
     id: string;
@@ -31,6 +32,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const { language, setLanguage, t } = useUiLanguage();
     const [apis, setApis] = useState<ApiEntry[]>([]);
     const [revealedKeys, setRevealedKeys] = useState<Set<string>>(new Set());
     const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -143,8 +145,8 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                     <Settings size={16} className="text-cyan-400" />
                                 </div>
                                 <div>
-                                    <h2 className="text-sm font-bold tracking-[0.2em] text-white font-mono">SYSTEM CONFIG</h2>
-                                    <span className="text-[9px] text-gray-500 font-mono tracking-widest">API KEY REGISTRY</span>
+                                    <h2 className="text-sm font-bold tracking-[0.2em] text-white font-mono">{t("ui.settings")}</h2>
+                                    <span className="text-[9px] text-gray-500 font-mono tracking-widest">{t("ui.settingsSubtitle")}</span>
                                 </div>
                             </div>
                             <button
@@ -159,9 +161,38 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                         <div className="mx-4 mt-4 p-3 rounded-lg border border-cyan-900/30 bg-cyan-950/10">
                             <div className="flex items-start gap-2">
                                 <Shield size={12} className="text-cyan-500 mt-0.5 flex-shrink-0" />
-                                <p className="text-[10px] text-gray-400 font-mono leading-relaxed">
-                                    API keys are stored locally in the backend <span className="text-cyan-400">.env</span> file. Keys marked with <Key size={8} className="inline text-yellow-500" /> are required for full functionality. Public APIs need no key.
-                                </p>
+                                <p className="text-[10px] text-gray-400 font-mono leading-relaxed">{t("ui.settingsInfo")}</p>
+                            </div>
+                        </div>
+
+                        <div className="mx-4 mt-3 p-3 rounded-lg border border-gray-800/60 bg-black/30">
+                            <div className="flex items-center justify-between gap-3">
+                                <div className="flex flex-col">
+                                    <span className="text-[9px] text-gray-500 font-mono tracking-widest">{t("ui.language")}</span>
+                                    <span className="text-[10px] text-gray-400 font-mono">{language === "sr-Latn" ? t("ui.languageSerbian") : t("ui.languageEnglish")}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        onClick={() => setLanguage("en")}
+                                        className={`px-3 py-1.5 rounded border text-[10px] font-mono tracking-widest transition-colors ${language === "en"
+                                            ? "border-cyan-500/40 bg-cyan-950/30 text-cyan-300"
+                                            : "border-gray-700 text-gray-500 hover:border-gray-600 hover:text-gray-300"
+                                            }`}
+                                    >
+                                        {t("ui.languageEnglish")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setLanguage("sr-Latn")}
+                                        className={`px-3 py-1.5 rounded border text-[10px] font-mono tracking-widest transition-colors ${language === "sr-Latn"
+                                            ? "border-cyan-500/40 bg-cyan-950/30 text-cyan-300"
+                                            : "border-gray-700 text-gray-500 hover:border-gray-600 hover:text-gray-300"
+                                            }`}
+                                    >
+                                        {t("ui.languageSerbian")}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -183,7 +214,7 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                     {category.toUpperCase()}
                                                 </span>
                                                 <span className="text-[10px] text-gray-500 font-mono">
-                                                    {categoryApis.length} {categoryApis.length === 1 ? 'service' : 'services'}
+                                                    {categoryApis.length} {categoryApis.length === 1 ? t("ui.service") : t("ui.services")}
                                                 </span>
                                             </div>
                                             {isExpanded ? <ChevronUp size={12} className="text-gray-500" /> : <ChevronDown size={12} className="text-gray-500" />}
@@ -209,11 +240,11 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                                 <div className="flex items-center gap-1.5">
                                                                     {api.has_key ? (
                                                                         <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border border-green-500/30 text-green-400 bg-green-950/20">
-                                                                            KEY SET
+                                                                            {t("ui.keySet")}
                                                                         </span>
                                                                     ) : (
                                                                         <span className="text-[8px] font-mono px-1.5 py-0.5 rounded border border-gray-700 text-gray-500">
-                                                                            PUBLIC
+                                                                            {t("ui.public")}
                                                                         </span>
                                                                     )}
                                                                     {api.url && (
@@ -246,7 +277,7 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                                                 value={editValue}
                                                                                 onChange={(e) => setEditValue(e.target.value)}
                                                                                 className="flex-1 bg-black/60 border border-cyan-900/50 rounded px-2 py-1.5 text-[11px] font-mono text-cyan-300 outline-none focus:border-cyan-500/70 transition-colors"
-                                                                                placeholder="Enter API key..."
+                                                                                placeholder={t("ui.enterKey")}
                                                                                 autoFocus
                                                                             />
                                                                             <button
@@ -255,7 +286,7 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                                                 className="px-3 py-1.5 rounded bg-cyan-500/20 border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500/30 transition-colors text-[10px] font-mono flex items-center gap-1"
                                                                             >
                                                                                 <Save size={10} />
-                                                                                {saving ? "..." : "SAVE"}
+                                                                                {saving ? "..." : t("ui.save")}
                                                                             </button>
                                                                             <button
                                                                                 onClick={() => setEditingId(null)}
@@ -283,7 +314,7 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                                                         ? "border-cyan-500/40 text-cyan-400 bg-cyan-950/30"
                                                                                         : "border-gray-700 text-gray-600 hover:text-gray-400 hover:border-gray-600"
                                                                                     }`}
-                                                                                title={revealedKeys.has(api.id) ? "Hide key" : "Reveal key"}
+                                                                                title={revealedKeys.has(api.id) ? t("ui.hideKey") : t("ui.revealKey")}
                                                                             >
                                                                                 {revealedKeys.has(api.id) ? <EyeOff size={12} /> : <Eye size={12} />}
                                                                             </button>
@@ -295,7 +326,7 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                                                                                         ? "border-green-500/40 text-green-400 bg-green-950/30"
                                                                                         : "border-gray-700 text-gray-600 hover:text-gray-400 hover:border-gray-600"
                                                                                     }`}
-                                                                                title="Copy to clipboard"
+                                                                                title={t("ui.copyKey")}
                                                                             >
                                                                                 {copiedId === api.id ? <Check size={12} /> : <Copy size={12} />}
                                                                             </button>
@@ -316,8 +347,8 @@ const SettingsPanel = React.memo(function SettingsPanel({ isOpen, onClose }: { i
                         {/* Footer */}
                         <div className="p-4 border-t border-gray-800/80">
                             <div className="flex items-center justify-between text-[9px] text-gray-600 font-mono">
-                                <span>{apis.length} REGISTERED APIs</span>
-                                <span>{apis.filter(a => a.has_key).length} KEYS CONFIGURED</span>
+                                <span>{apis.length} {t("ui.registeredApis")}</span>
+                                <span>{apis.filter(a => a.has_key).length} {t("ui.keysConfigured")}</span>
                             </div>
                         </div>
                     </motion.div>

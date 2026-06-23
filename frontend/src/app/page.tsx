@@ -14,12 +14,14 @@ import SettingsPanel from "@/components/SettingsPanel";
 import MapLegend from "@/components/MapLegend";
 import ScaleBar from "@/components/ScaleBar";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { UiLanguageProvider, useUiLanguage } from "@/lib/uiLanguage";
 
 // Use dynamic loads for Maplibre to avoid SSR window is not defined errors
 const MaplibreViewer = dynamic(() => import('@/components/MaplibreViewer'), { ssr: false });
 const CesiumViewer = dynamic(() => import('@/components/CesiumViewer'), { ssr: false });
 
-export default function Dashboard() {
+function DashboardContent() {
+  const { t } = useUiLanguage();
   const dataRef = useRef<any>({});
   const [dataVersion, setDataVersion] = useState(0);
   // Stable reference for child components — only changes when dataVersion increments
@@ -268,9 +270,9 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-col">
               <h1 className="text-2xl font-bold tracking-[0.4em] text-white flex items-center gap-3" style={{ fontFamily: 'monospace' }}>
-                S H A D O W <span className="text-cyan-400">B R O K E R</span>
+                {t("app.title")}
               </h1>
-              <span className="text-[9px] text-gray-500 font-mono tracking-[0.3em] mt-1 ml-1">GLOBAL THREAT INTERCEPT</span>
+              <span className="text-[9px] text-gray-500 font-mono tracking-[0.3em] mt-1 ml-1">{t("app.subtitle")}</span>
             </div>
           </motion.div>
 
@@ -355,7 +357,7 @@ export default function Dashboard() {
             >
               {/* Coordinates */}
               <div className="flex flex-col items-center min-w-[120px]">
-                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">COORDINATES</div>
+                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">{t("ui.coordinates")}</div>
                 <div className="text-[11px] text-cyan-400 font-mono font-bold tracking-wide">
                   {mouseCoords ? `${mouseCoords.lat.toFixed(4)}, ${mouseCoords.lng.toFixed(4)}` : '0.0000, 0.0000'}
                 </div>
@@ -366,9 +368,9 @@ export default function Dashboard() {
 
               {/* Location name */}
               <div className="flex flex-col items-center min-w-[180px] max-w-[320px]">
-                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">LOCATION</div>
+                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">{t("ui.location")}</div>
                 <div className="text-[10px] text-gray-300 font-mono truncate max-w-[320px]">
-                  {locationLabel || 'Hover over map...'}
+                  {locationLabel || t("ui.findPlaceholder")}
                 </div>
               </div>
 
@@ -377,7 +379,7 @@ export default function Dashboard() {
 
               {/* Style preset (compact) */}
               <div className="flex flex-col items-center">
-                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">STYLE</div>
+                <div className="text-[8px] text-gray-600 font-mono tracking-[0.2em]">{t("ui.style")}</div>
                 <div className="text-[11px] text-cyan-400 font-mono font-bold">{activeStyle}</div>
               </div>
             </div>
@@ -391,7 +393,7 @@ export default function Dashboard() {
           onClick={() => setUiVisible(true)}
           className="absolute bottom-6 right-6 z-[200] bg-black/60 backdrop-blur-md border border-gray-800 rounded px-4 py-2 text-[10px] font-mono tracking-widest text-cyan-500 hover:text-cyan-300 hover:border-cyan-800 transition-colors pointer-events-auto"
         >
-          RESTORE UI
+          {t("ui.restore")}
         </button>
       )}
 
@@ -427,5 +429,13 @@ export default function Dashboard() {
       <MapLegend isOpen={legendOpen} onClose={() => setLegendOpen(false)} />
 
     </main>
+  );
+}
+
+export default function Dashboard() {
+  return (
+    <UiLanguageProvider>
+      <DashboardContent />
+    </UiLanguageProvider>
   );
 }

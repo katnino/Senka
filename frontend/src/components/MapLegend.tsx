@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { useUiLanguage } from "@/lib/uiLanguage";
 
 // ─── Inline SVG legend icons (small, crisp, no external deps) ───
 const plane = (fill: string, size = 16) =>
@@ -187,6 +188,7 @@ const LEGEND: LegendCategory[] = [
 ];
 
 const MapLegend = React.memo(function MapLegend({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+    const { t } = useUiLanguage();
     const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
 
     const toggle = (name: string) => {
@@ -196,6 +198,47 @@ const MapLegend = React.memo(function MapLegend({ isOpen, onClose }: { isOpen: b
             else next.add(name);
             return next;
         });
+    };
+
+    const legendTitle = (name: string) => {
+        switch (name) {
+            case "COMMERCIAL AVIATION":
+                return t("legend.commercialAviation");
+            case "PRIVATE AVIATION":
+                return t("legend.privateAviation");
+            case "PRIVATE JETS":
+                return t("legend.privateJets");
+            case "MILITARY / GOVERNMENT":
+                return t("legend.militaryGov");
+            case "MILITARY AVIATION":
+                return t("legend.militaryAviation");
+            case "TRACKED AIRCRAFT (ALERT)":
+                return t("legend.trackedAircraft");
+            case "MARITIME":
+                return t("legend.maritime");
+            case "GEOPHYSICAL":
+                return t("legend.geophysical");
+            case "SATELLITES":
+                return t("legend.satellites");
+            case "INCIDENTS & INTELLIGENCE":
+                return t("legend.incidentsIntelligence");
+            case "NEWS & OSINT":
+                return t("legend.newsOsint");
+            case "GPS JAMMING / INTERFERENCE":
+                return t("legend.gpsJamming");
+            case "SURVEILLANCE / CCTV":
+                return t("legend.surveillanceCctv");
+            case "OVERLAYS":
+                return t("legend.overlays");
+            case "INTELLIGENCE / SIGINT":
+                return t("legend.intelligence");
+            case "SURVEILLANCE":
+                return t("legend.surveillance");
+            case "GEOSPATIAL":
+                return t("legend.geospatial");
+            default:
+                return name;
+        }
     };
 
     return (
@@ -230,8 +273,8 @@ const MapLegend = React.memo(function MapLegend({ isOpen, onClose }: { isOpen: b
                                     </svg>
                                 </div>
                                 <div>
-                                    <h2 className="text-sm font-bold tracking-[0.2em] text-white font-mono">MAP LEGEND</h2>
-                                    <span className="text-[9px] text-gray-500 font-mono tracking-widest">ICON REFERENCE KEY</span>
+                                    <h2 className="text-sm font-bold tracking-[0.2em] text-white font-mono">{t("ui.mapLegend")}</h2>
+                                    <span className="text-[9px] text-gray-500 font-mono tracking-widest">{t("ui.legendSubtitle")}</span>
                                 </div>
                             </div>
                             <button
@@ -254,7 +297,7 @@ const MapLegend = React.memo(function MapLegend({ isOpen, onClose }: { isOpen: b
                                             className="w-full flex items-center justify-between px-3 py-2 bg-gray-900/50 hover:bg-gray-900/80 transition-colors"
                                         >
                                             <span className={`text-[9px] font-mono tracking-widest font-bold px-2 py-0.5 rounded border ${cat.color}`}>
-                                                {cat.name}
+                                                {legendTitle(cat.name)}
                                             </span>
                                             {isCollapsed ? <ChevronDown size={12} className="text-gray-500" /> : <ChevronUp size={12} className="text-gray-500" />}
                                         </button>
@@ -288,7 +331,7 @@ const MapLegend = React.memo(function MapLegend({ isOpen, onClose }: { isOpen: b
                         {/* Footer */}
                         <div className="p-3 border-t border-gray-800/80 flex-shrink-0">
                             <div className="text-[9px] text-gray-600 font-mono text-center tracking-wider">
-                                {LEGEND.reduce((sum, c) => sum + c.items.length, 0)} ICON DEFINITIONS ACROSS {LEGEND.length} CATEGORIES
+                                {LEGEND.reduce((sum, c) => sum + c.items.length, 0)} {t("ui.legendFooter")} {LEGEND.length} {t("ui.legendCategories")}
                             </div>
                         </div>
                     </motion.div>

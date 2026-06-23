@@ -6,6 +6,7 @@ import { ChevronUp, Filter, Plane, Shield, Star, Ship, SlidersHorizontal } from 
 import AdvancedFilterModal from './AdvancedFilterModal';
 import { airlineNames } from '../lib/airlineCodes';
 import { trackedCategories, trackedOperators } from '../lib/trackedData';
+import { useUiLanguage } from '@/lib/uiLanguage';
 
 interface FilterPanelProps {
     data: any;
@@ -22,6 +23,7 @@ type ModalConfig = {
 };
 
 export default function FilterPanel({ data, activeFilters, setActiveFilters }: FilterPanelProps) {
+    const { t } = useUiLanguage();
     const [isMinimized, setIsMinimized] = useState(true);
     const [openModal, setOpenModal] = useState<string | null>(null);
 
@@ -142,54 +144,54 @@ export default function FilterPanel({ data, activeFilters, setActiveFilters }: F
 
     const modalConfigs: Record<string, ModalConfig> = {
         commercial: {
-            title: 'COMMERCIAL FLIGHTS',
+            title: t('ui.commercialFlights'),
             icon: <Plane size={13} className="text-cyan-400" />,
             accentColor: '#00bcd4',
             accentColorName: 'cyan',
             fields: [
-                { key: 'commercial_departure', label: 'DEPARTURE', options: uniqueOrigins },
-                { key: 'commercial_arrival', label: 'ARRIVAL', options: uniqueDestinations },
-                { key: 'commercial_airline', label: 'AIRLINE', options: uniqueAirlines, optionLabels: airlineLabels },
+                { key: 'commercial_departure', label: t('ui.departure'), options: uniqueOrigins },
+                { key: 'commercial_arrival', label: t('ui.arrival'), options: uniqueDestinations },
+                { key: 'commercial_airline', label: t('ui.airline'), options: uniqueAirlines, optionLabels: airlineLabels },
             ]
         },
         private: {
-            title: 'PRIVATE / JETS',
+            title: t('ui.privateFlights'),
             icon: <Plane size={13} className="text-orange-400" />,
             accentColor: '#FF8C00',
             accentColorName: 'orange',
             fields: [
-                { key: 'private_callsign', label: 'CALLSIGN / REG', options: uniquePrivateCallsigns },
-                { key: 'private_aircraft_type', label: 'AIRCRAFT TYPE', options: uniquePrivateAircraftTypes },
+                { key: 'private_callsign', label: t('ui.callsignReg'), options: uniquePrivateCallsigns },
+                { key: 'private_aircraft_type', label: t('ui.aircraftType'), options: uniquePrivateAircraftTypes },
             ]
         },
         military: {
-            title: 'MILITARY',
+            title: t('ui.militaryFlights'),
             icon: <Shield size={13} className="text-yellow-400" />,
             accentColor: '#EAB308',
             accentColorName: 'yellow',
             fields: [
-                { key: 'military_country', label: 'COUNTRY / REG', options: uniqueMilCountries },
-                { key: 'military_aircraft_type', label: 'AIRCRAFT TYPE', options: uniqueMilAircraftTypes },
+                { key: 'military_country', label: t('ui.countryReg'), options: uniqueMilCountries },
+                { key: 'military_aircraft_type', label: t('ui.aircraftType'), options: uniqueMilAircraftTypes },
             ]
         },
         tracked: {
-            title: 'TRACKED AIRCRAFT',
+            title: t('ui.trackedAircraft'),
             icon: <Star size={13} className="text-pink-400" />,
             accentColor: '#EC4899',
             accentColorName: 'pink',
             fields: [
-                { key: 'tracked_category', label: 'CATEGORY', options: uniqueTrackedCategories },
-                { key: 'tracked_owner', label: 'OPERATOR / ENTITY', options: uniqueTrackedOperators },
+                { key: 'tracked_category', label: t('ui.category'), options: uniqueTrackedCategories },
+                { key: 'tracked_owner', label: t('ui.operatorEntity'), options: uniqueTrackedOperators },
             ]
         },
         ships: {
-            title: 'MARITIME VESSELS',
+            title: t('ui.maritimeVessels'),
             icon: <Ship size={13} className="text-blue-400" />,
             accentColor: '#3B82F6',
             accentColorName: 'blue',
             fields: [
-                { key: 'ship_name', label: 'VESSEL NAME', options: uniqueShipNames },
-                { key: 'ship_type', label: 'VESSEL TYPE', options: uniqueVesselTypes },
+                { key: 'ship_name', label: t('ui.vesselName'), options: uniqueShipNames },
+                { key: 'ship_type', label: t('ui.vesselType'), options: uniqueVesselTypes },
             ]
         }
     };
@@ -259,12 +261,12 @@ export default function FilterPanel({ data, activeFilters, setActiveFilters }: F
                     className="flex justify-between items-center p-3 cursor-pointer hover:bg-gray-900/50 transition-colors border-b border-gray-800/50"
                     onClick={() => setIsMinimized(!isMinimized)}
                 >
-                    <div className="flex items-center gap-2">
-                        <Filter size={12} className="text-cyan-500" />
-                        <span className="text-[10px] text-gray-500 font-mono tracking-widest">DATA FILTERS</span>
+                        <div className="flex items-center gap-2">
+                            <Filter size={12} className="text-cyan-500" />
+                        <span className="text-[10px] text-gray-500 font-mono tracking-widest">{t('ui.dataFilters')}</span>
                         {activeCount > 0 && (
                             <span className="text-[9px] bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded-sm">
-                                {activeCount} ACTIVE
+                                {activeCount} {t('ui.active')}
                             </span>
                         )}
                     </div>
@@ -286,7 +288,7 @@ export default function FilterPanel({ data, activeFilters, setActiveFilters }: F
                                     onClick={clearAll}
                                     className="text-[9px] text-red-400 hover:text-red-300 tracking-widest self-end mb-1"
                                 >
-                                    CLEAR ALL FILTERS
+                                    {t('ui.clearAllFilters')}
                                 </button>
                             )}
 

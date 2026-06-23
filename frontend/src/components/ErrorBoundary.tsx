@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
+import { UiLanguageContext } from "@/lib/uiLanguage";
 
 interface Props {
     children: ReactNode;
@@ -31,18 +32,25 @@ class ErrorBoundary extends Component<Props, State> {
         if (this.state.hasError) {
             if (this.props.fallback) return this.props.fallback;
             return (
-                <div className="flex items-center justify-center p-4 bg-red-950/40 border border-red-800 rounded-lg m-2">
-                    <div className="text-center font-mono">
-                        <div className="text-red-400 text-xs tracking-widest mb-1">⚠ SYSTEM ERROR</div>
-                        <div className="text-gray-400 text-[10px]">{this.props.name || "Component"} failed to render</div>
-                        <button
-                            onClick={() => this.setState({ hasError: false, error: null })}
-                            className="mt-2 px-3 py-1 text-[10px] bg-red-900/60 hover:bg-red-800/60 text-red-300 rounded border border-red-700 transition-colors"
-                        >
-                            RETRY
-                        </button>
-                    </div>
-                </div>
+                <UiLanguageContext.Consumer>
+                    {(value) => {
+                        const t = value?.t ?? ((key: string) => key);
+                        return (
+                            <div className="flex items-center justify-center p-4 bg-red-950/40 border border-red-800 rounded-lg m-2">
+                                <div className="text-center font-mono">
+                                    <div className="text-red-400 text-xs tracking-widest mb-1">⚠ {t("ui.systemError")}</div>
+                                    <div className="text-gray-400 text-[10px]">{this.props.name || "Component"} {t("ui.componentFailedToRender")}</div>
+                                    <button
+                                        onClick={() => this.setState({ hasError: false, error: null })}
+                                        className="mt-2 px-3 py-1 text-[10px] bg-red-900/60 hover:bg-red-800/60 text-red-300 rounded border border-red-700 transition-colors"
+                                    >
+                                        {t("ui.retry")}
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    }}
+                </UiLanguageContext.Consumer>
             );
         }
         return this.props.children;

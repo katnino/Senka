@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Search, Crosshair, Plane, Shield, Star, Ship, X, Database } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { trackedOperators } from '../lib/trackedData';
+import { useUiLanguage } from "@/lib/uiLanguage";
 
 interface FindLocateBarProps {
     data: any;
@@ -16,6 +17,7 @@ interface SearchResult {
     label: string;
     sublabel: string;
     category: string;
+    categoryLabel: string;
     categoryColor: string;
     lat: number;
     lng: number;
@@ -23,6 +25,7 @@ interface SearchResult {
 }
 
 export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBarProps) {
+    const { t } = useUiLanguage();
     const [query, setQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -51,6 +54,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: f.callsign || uid,
                 sublabel: `${f.model || 'Unknown'} · ${f.airline_code || 'Commercial'}`,
                 category: "COMMERCIAL",
+                categoryLabel: t("search.commercial"),
                 categoryColor: "text-cyan-400",
                 lat: f.lat,
                 lng: f.lng,
@@ -67,6 +71,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: f.callsign || f.registration || uid,
                 sublabel: `${f.model || 'Unknown'} · Private`,
                 category: "PRIVATE",
+                categoryLabel: t("search.private"),
                 categoryColor: "text-orange-400",
                 lat: f.lat,
                 lng: f.lng,
@@ -82,6 +87,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: f.callsign || uid,
                 sublabel: `${f.model || 'Unknown'} · ${f.military_type || 'Military'}`,
                 category: "MILITARY",
+                categoryLabel: t("search.military"),
                 categoryColor: "text-yellow-400",
                 lat: f.lat,
                 lng: f.lng,
@@ -100,6 +106,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: operator,
                 sublabel: `${category} · ${type} (${f.registration || uid})`,
                 category: "TRACKED",
+                categoryLabel: t("search.tracked"),
                 categoryColor: "text-pink-400",
                 lat: f.lat,
                 lng: f.lng,
@@ -114,6 +121,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: s.name || "UNKNOWN",
                 sublabel: `${s.type || 'Vessel'} · ${s.destination || 'Unknown dest'}`,
                 category: "MARITIME",
+                categoryLabel: t("search.maritime"),
                 categoryColor: "text-blue-400",
                 lat: s.lat,
                 lng: s.lng,
@@ -128,6 +136,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                 label: op,
                 sublabel: `Database Record · Operator`,
                 category: "DATABASE",
+                categoryLabel: t("search.database"),
                 categoryColor: "text-purple-400",
                 lat: 0,
                 lng: 0,
@@ -136,7 +145,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
         }
 
         return results;
-    }, [data]);
+    }, [data, t]);
 
     // Filter results based on query
     const filtered = useMemo(() => {
@@ -177,7 +186,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                     ref={inputRef}
                     type="text"
                     value={query}
-                    placeholder="Find aircraft or vessel..."
+                    placeholder={t("ui.findPlaceholder")}
                     className="flex-1 bg-transparent text-[10px] text-gray-300 font-mono tracking-wider outline-none placeholder:text-gray-600"
                     onChange={(e) => {
                         setQuery(e.target.value);
@@ -216,13 +225,13 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                                         <div className="text-[8px] text-gray-500 font-mono truncate">{r.sublabel}</div>
                                     </div>
                                     <span className={`text-[7px] font-bold tracking-widest ${r.categoryColor} flex-shrink-0`}>
-                                        {r.category}
+                                        {r.categoryLabel}
                                     </span>
                                 </button>
                             ))}
                         </div>
                         <div className="px-3 py-1.5 border-t border-gray-800 bg-black/50 text-[8px] text-gray-600 font-mono tracking-widest">
-                            {filtered.length} RESULT{filtered.length !== 1 ? 'S' : ''} — CLICK TO LOCATE
+                            {filtered.length} {t("ui.results")} — {t("ui.clickToLocate")}
                         </div>
                     </motion.div>
                 )}
@@ -233,7 +242,7 @@ export default function FindLocateBar({ data, onLocate, onFilter }: FindLocateBa
                         exit={{ opacity: 0, y: -4 }}
                         className="absolute top-full left-0 right-0 mt-1 bg-black/90 backdrop-blur-md border border-gray-800 rounded-lg z-50 p-4 text-center"
                     >
-                        <div className="text-[9px] text-gray-600 font-mono tracking-widest">NO MATCHING ASSETS</div>
+                        <div className="text-[9px] text-gray-600 font-mono tracking-widest">{t("ui.noMatches")}</div>
                     </motion.div>
                 )}
             </AnimatePresence>

@@ -8,6 +8,7 @@ import ScaleBar from "@/components/ScaleBar";
 import maplibregl from "maplibre-gl";
 import { AlertTriangle } from "lucide-react";
 import WikiImage from "@/components/WikiImage";
+import { useUiLanguage } from "@/lib/uiLanguage";
 
 const svgPlaneCyan = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="cyan" stroke="black"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" /></svg>`)}`;
 const svgPlaneYellow = `data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="yellow" stroke="black"><path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" /></svg>`)}`;
@@ -185,6 +186,7 @@ const MISSION_ICON_MAP: Record<string, string> = {
 };
 
 const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, selectedEntity, onMouseCoords, onRightClick, regionDossier, regionDossierLoading, onViewStateChange, measureMode, onMeasureClick, measurePoints, onToggle3D }: any) => {
+    const { t } = useUiLanguage();
     const mapRef = useRef<MapRef>(null);
 
     const [viewState, setViewState] = useState<ViewState>({
@@ -1858,22 +1860,22 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                             <div className="bg-black/90 backdrop-blur-md border border-orange-800 rounded-lg flex flex-col z-[100] font-mono shadow-[0_4px_30px_rgba(255,140,0,0.4)] pointer-events-auto overflow-hidden w-[300px]">
                                 <div className="p-2 border-b border-orange-500/30 bg-orange-950/40 flex justify-between items-center">
                                     <h2 className="text-[10px] tracking-widest font-bold text-orange-400 flex items-center gap-1">
-                                        <AlertTriangle size={12} className="text-orange-400" /> NEWS ON THE GROUND
+                                            <AlertTriangle size={12} className="text-orange-400" /> {t("ui.newsOnTheGround")}
                                     </h2>
                                     <button onClick={() => onEntityClick?.(null)} className="text-gray-400 hover:text-white">✕</button>
                                 </div>
                                 <div className="p-3 flex flex-col gap-2">
                                     <div className="flex justify-between items-center border-b border-gray-800 pb-1">
-                                        <span className="text-gray-500 text-[9px]">LOCATION</span>
-                                        <span className="text-white text-[10px] font-bold text-right ml-2 break-words max-w-[150px]">{data.gdelt[selectedEntity.id as number].properties?.name || 'UNKNOWN REGION'}</span>
+                                        <span className="text-gray-500 text-[9px]">{t("ui.location")}</span>
+                                        <span className="text-white text-[10px] font-bold text-right ml-2 break-words max-w-[150px]">{data.gdelt[selectedEntity.id as number].properties?.name || t("ui.unknownRegion")}</span>
                                     </div>
                                     <div className="flex flex-col gap-1 mt-1">
-                                        <span className="text-gray-500 text-[9px]">LATEST REPORTS: ({data.gdelt[selectedEntity.id as number].properties?.count || 1})</span>
+                                        <span className="text-gray-500 text-[9px]">{t("ui.latestReports")} ({data.gdelt[selectedEntity.id as number].properties?.count || 1})</span>
                                         <div className="flex flex-col gap-2 max-h-[200px] overflow-y-auto styled-scrollbar mt-1">
                                             {(() => {
                                                 const urls: string[] = data.gdelt[selectedEntity.id as number].properties?._urls_list || [];
                                                 const headlines: string[] = data.gdelt[selectedEntity.id as number].properties?._headlines_list || [];
-                                                if (urls.length === 0) return <span className="text-gray-500 text-[9px]">No articles available.</span>;
+                                                if (urls.length === 0) return <span className="text-gray-500 text-[9px]">{t("ui.noArticlesAvailable")}</span>;
                                                 return urls.map((url: string, idx: number) => (
                                                     <a
                                                         key={idx}
@@ -1912,7 +1914,7 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                                 <div className="bg-black/90 backdrop-blur-md border border-yellow-800 rounded-lg flex flex-col z-[100] font-mono shadow-[0_4px_30px_rgba(255,255,0,0.3)] pointer-events-auto overflow-hidden w-[280px]">
                                     <div className="p-2 border-b border-yellow-500/30 bg-yellow-950/40 flex justify-between items-center">
                                         <h2 className="text-[10px] tracking-widest font-bold text-yellow-400 flex items-center gap-1">
-                                            <AlertTriangle size={12} className="text-yellow-400" /> REGIONAL TACTICAL EVENT
+                                            <AlertTriangle size={12} className="text-yellow-400" /> {t("ui.regionalTacticalEvent")}
                                         </h2>
                                         <button onClick={() => onEntityClick?.(null)} className="text-gray-400 hover:text-white">✕</button>
                                     </div>
@@ -1921,13 +1923,13 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                                             <span className="text-yellow-400 text-[10px] font-bold leading-tight">{item.title}</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-gray-800 pb-1 mt-1">
-                                            <span className="text-gray-500 text-[9px]">TIME</span>
-                                            <span className="text-white text-[9px] font-bold">{item.timestamp || 'UNKNOWN'}</span>
+                                            <span className="text-gray-500 text-[9px]">{t("ui.time")}</span>
+                                            <span className="text-white text-[9px] font-bold">{item.timestamp || t("ui.unknown")}</span>
                                         </div>
                                         {item.link && (
                                             <div className="flex justify-between items-center mt-1">
                                                 <a href={item.link} target="_blank" rel="noreferrer" className="text-yellow-400 hover:text-yellow-300 text-[9px] font-bold underline">
-                                                    View Source Report
+                                                    {t("ui.viewSourceReport")}
                                                 </a>
                                             </div>
                                         )}
@@ -1972,7 +1974,7 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                                 <div className={`bg-black/90 backdrop-blur-md border ${borderColor} rounded-lg flex flex-col z-[100] font-mono shadow-[0_4px_30px_${shadowColor}] pointer-events-auto overflow-hidden w-[280px]`}>
                                     <div className={`p-2 border-b ${borderColor}/50 ${bgHeaderColor} flex justify-between items-center`}>
                                         <h2 className={`text-[10px] tracking-widest font-bold ${threatColor} flex items-center gap-1`}>
-                                            <AlertTriangle size={12} className={threatColor} /> THREAT INTERCEPT
+                                            <AlertTriangle size={12} className={threatColor} /> {t("ui.threatIntercept")}
                                         </h2>
                                         <div className="flex items-center gap-2">
                                             <span className={`text-[10px] ${threatColor} font-mono font-bold animate-pulse`}>LVL: {item.risk_score}/10</span>
@@ -1984,8 +1986,8 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                                             <span className={`text-[10px] font-bold leading-tight ${threatColor}`}>{item.title}</span>
                                         </div>
                                         <div className="flex justify-between items-center border-b border-gray-800 pb-1 mt-1">
-                                            <span className="text-gray-500 text-[9px]">SOURCE</span>
-                                            <span className="text-white text-[9px] font-bold text-right ml-2">{item.source || 'UNKNOWN'}</span>
+                                            <span className="text-gray-500 text-[9px]">{t("ui.source")}</span>
+                                            <span className="text-white text-[9px] font-bold text-right ml-2">{item.source || t("ui.unknown")}</span>
                                         </div>
                                         {item.machine_assessment && (
                                             <div className="mt-1 p-2 bg-black/60 border border-cyan-800/50 rounded-sm text-[8px] text-cyan-400 font-mono leading-tight relative overflow-hidden shadow-[inset_0_0_10px_rgba(0,255,255,0.05)]">
@@ -1997,7 +1999,7 @@ const MaplibreViewer = ({ data, activeLayers, onEntityClick, flyToLocation, sele
                                         {item.link && (
                                             <div className="flex justify-between items-center mt-1">
                                                 <a href={item.link} target="_blank" rel="noreferrer" className={`${threatColor} hover:text-red-300 text-[9px] font-bold underline`}>
-                                                    View Details
+                                                {t("ui.viewDetails")}
                                                 </a>
                                             </div>
                                         )}

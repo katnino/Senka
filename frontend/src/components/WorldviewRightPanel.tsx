@@ -3,8 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useUiLanguage } from "@/lib/uiLanguage";
 
 const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, setEffects, setUiVisible }: { effects: any; setEffects: any; setUiVisible: any }) {
+    const { t } = useUiLanguage();
     const [isMinimized, setIsMinimized] = useState(true);
     const [currentTime, setCurrentTime] = useState({ date: "XXXX-XX-XX", time: "00:00:00" });
 
@@ -48,7 +50,7 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, s
                     className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-900/50 transition-colors border-b border-gray-800/50"
                     onClick={() => setIsMinimized(!isMinimized)}
                 >
-                    <span className="text-[10px] text-gray-500 font-mono tracking-widest">DISPLAY CONFIG</span>
+                    <span className="text-[10px] text-gray-500 font-mono tracking-widest">{t("ui.displayConfig")}</span>
                     <button className="text-gray-500 hover:text-white transition-colors">
                         {isMinimized ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
                     </button>
@@ -71,9 +73,9 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, s
                                 >
                                     <div className="flex items-center gap-3">
                                         <span className={`text-[14px] ${effects.bloom ? 'text-yellow-500' : 'text-gray-600'}`}>✧</span>
-                                        <span className={`text-xs font-mono tracking-widest ${effects.bloom ? 'text-white' : 'text-gray-500'}`}>BLOOM</span>
+                                        <span className={`text-xs font-mono tracking-widest ${effects.bloom ? 'text-white' : 'text-gray-500'}`}>{t("ui.bloom")}</span>
                                     </div>
-                                    <span className="text-[9px] font-mono tracking-wider text-gray-500">{effects.bloom ? 'ON' : 'OFF'}</span>
+                                    <span className="text-[9px] font-mono tracking-wider text-gray-500">{effects.bloom ? t("ui.on") : t("ui.off")}</span>
                                 </div>
 
                                 {/* Sharpen Slider */}
@@ -83,7 +85,7 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, s
                                         <span className="w-3 h-3 rounded-full border border-cyan-400 flex items-center justify-center relative">
                                             <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full"></span>
                                         </span>
-                                        <span className="text-xs font-mono tracking-widest text-cyan-400 font-bold">SHARPEN</span>
+                                        <span className="text-xs font-mono tracking-widest text-cyan-400 font-bold">{t("ui.sharpen")}</span>
                                     </div>
                                     <div className="flex items-center justify-between gap-3 mt-1">
                                         <div className="h-0.5 bg-gray-800 flex-1 relative rounded-full">
@@ -98,13 +100,13 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, s
                                 <div className="flex flex-col gap-2 relative">
                                     <div className="flex items-center gap-3 border border-gray-800 rounded px-4 py-3 text-gray-500 cursor-default">
                                         <span className="w-3 h-3 border border-gray-500 rounded-full flex items-center justify-center"></span>
-                                        <span className="text-xs font-mono tracking-widest">HUD</span>
+                                        <span className="text-xs font-mono tracking-widest">{t("ui.hud")}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between border border-gray-800 rounded px-4 py-2 mt-1 bg-black/50">
-                                        <span className="text-[10px] text-gray-500 font-mono">LAYOUT</span>
+                                        <span className="text-[10px] text-gray-500 font-mono">{t("ui.layout")}</span>
                                         <span className="text-xs text-white tracking-widest border-b border-dashed border-gray-600 pb-0.5 cursor-pointer flex items-center gap-2">
-                                            Tactical
+                                            {t("ui.tactical")}
                                         </span>
                                     </div>
                                 </div>
@@ -113,7 +115,7 @@ const WorldviewRightPanel = React.memo(function WorldviewRightPanel({ effects, s
                                     className="w-full border border-red-900/30 bg-red-950/10 rounded py-3 mt-2 text-[10px] font-mono tracking-widest text-red-500 hover:text-white hover:bg-red-900 hover:border-red-600 transition-all font-bold"
                                     onClick={() => setUiVisible(false)}
                                 >
-                                    CLEAR UI (TACTICAL MODE)
+                                    {t("ui.clearUi")}
                                 </button>
                             </div>
                         </motion.div>
