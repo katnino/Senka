@@ -1,112 +1,112 @@
 <p align="center">
-  <h1 align="center">🛰️ S H A D O W B R O K E R</h1>
-  <p align="center"><strong>Global Threat Intercept — Real-Time Geospatial Intelligence Platform</strong></p>
+  <h1 align="center">🛰️ S E N K A <sub>(ShadowBroker)</sub></h1>
+  <p align="center"><strong>Globalno presretanje pretnji — Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
   <p align="center">
-    <code>TOP SECRET // SI TK // NOFORN</code>
+    <code>STROGO TAJNO // SI TK // NOFORN</code>
   </p>
 </p>
 
 ---
 
-**ShadowBroker** is a real-time, full-spectrum geospatial intelligence dashboard that aggregates live data from dozens of open-source intelligence (OSINT) feeds and renders them on a unified dark-ops map interface. It tracks aircraft, ships, satellites, earthquakes, conflict zones, CCTV networks, GPS jamming, and breaking geopolitical events — all updating in real time.
+**Senka** (kodni naziv *ShadowBroker*) je kontrolni panel za geoprostornu inteligenciju u realnom vremenu koji agregira žive podatke sa desetina OSINT (obaveštavanje iz otvorenih izvora) izvora i prikazuje ih na objedinjenom interfejsu mape u mračnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje — sve se ažurira u realnom vremenu.
 
-Built with **Next.js**, **MapLibre GL**, **FastAPI**, and **Python**, it's designed for analysts, researchers, and enthusiasts who want a single-pane-of-glass view of global activity.
+Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele objedinjeni prikaz globalne aktivnosti.
 
 ---
 
-## ✨ Features
+## ✨ Mogućnosti
 
-### 🛩️ Aviation Tracking
+### 🛩️ Praćenje vazduhoplova
 
-- **Commercial Flights** — Real-time positions via OpenSky Network (~5,000+ aircraft)
-- **Private Aircraft** — Light GA, turboprops, bizjets tracked separately
-- **Private Jets** — High-net-worth individual aircraft with owner identification
-- **Military Flights** — Tankers, ISR, fighters, transports via adsb.lol military endpoint
-- **Flight Trail Accumulation** — Persistent breadcrumb trails for all tracked aircraft
-- **Holding Pattern Detection** — Automatically flags aircraft circling (>300° total turn)
-- **Aircraft Classification** — Shape-accurate SVG icons: airliners, turboprops, bizjets, helicopters
-- **Grounded Detection** — Aircraft below 100ft AGL rendered with grey icons
+- **Komercijalni letovi** — Pozicije u realnom vremenu preko OpenSky Network mreže (~5.000+ letelica)
+- **Privatne letelice** — Laki GA, turboprop i poslovni džetovi se prate posebno
+- **Privatni džetovi** — Letelice pojedinaca visoke neto vrednosti sa identifikacijom vlasnika
+- **Vojni letovi** — Tankeri, ISR, lovci i transporteri preko adsb.lol vojnog endpointa
+- **Akumulacija tragova leta** — Trajni tragovi za sve praćene letelice
+- **Detekcija obrasca čekanja** — Automatski označava letelice u kruženju (>300° ukupnog zaokreta)
+- **Klasifikacija letelica** — Oblikom tačne SVG ikone: avioni, turboprop, poslovni džetovi, helikopteri
+- **Detekcija na zemlji** — Letelice ispod 100ft AGL prikazuju se sivim ikonama
 
-### 🚢 Maritime Tracking
+### 🚢 Pomorsko praćenje
 
-- **AIS Vessel Stream** — 25,000+ vessels via aisstream.io WebSocket (real-time)
-- **Ship Classification** — Cargo, tanker, passenger, yacht, military vessel types with color-coded icons
-- **Carrier Strike Group Tracker** — All 11 active US Navy aircraft carriers with OSINT-estimated positions
-  - Automated GDELT news scraping for carrier movement intelligence
-  - 50+ geographic region-to-coordinate mappings
-  - Disk-cached positions, auto-updates at 00:00 & 12:00 UTC
-- **Cruise & Passenger Ships** — Dedicated layer for cruise liners and ferries
-- **Clustered Display** — Ships cluster at low zoom with count labels, decluster on zoom-in
+- **AIS tok plovila** — 25.000+ plovila preko aisstream.io WebSocket-a (realno vreme)
+- **Klasifikacija brodova** — Teretni, tankeri, putnički, jahte i vojni tipovi plovila sa ikonama u boji
+- **Praćenje udarne grupe nosača** — Svih 11 aktivnih nosača aviona američke mornarice sa OSINT-procenjenim pozicijama
+  - Automatsko prikupljanje GDELT vesti za obaveštajne podatke o kretanju nosača
+  - 50+ mapiranja geografskih regija u koordinate
+  - Pozicije keširane na disku, automatsko ažuriranje u 00:00 i 12:00 UTC
+- **Kruzeri i putnički brodovi** — Posvećen sloj za kruzere i trajekte
+- **Grupisani prikaz** — Brodovi se grupišu pri niskom zumu sa oznakama broja, razgrupišu se pri povećanju zuma
 
-### 🛰️ Space & Satellites
+### 🛰️ Svemir i sateliti
 
-- **Orbital Tracking** — Real-time satellite positions from N2YO API
-- **Mission-Type Classification** — Color-coded by mission: military recon (red), SAR (cyan), SIGINT (white), navigation (blue), early warning (magenta), commercial imaging (green), space station (gold)
+- **Orbitalno praćenje** — Pozicije satelita u realnom vremenu sa N2YO API-ja
+- **Klasifikacija po tipu misije** — Obojeno po misiji: vojno izviđanje (crveno), SAR (cijan), SIGINT (belo), navigacija (plavo), rano upozorenje (magenta), komercijalno snimanje (zeleno), svemirska stanica (zlatno)
 
-### 🌍 Geopolitics & Conflict
+### 🌍 Geopolitika i sukobi
 
-- **Global Incidents** — GDELT-powered conflict event aggregation (last 8 hours, ~1,000 events)
-- **Ukraine Frontline** — Live warfront GeoJSON from DeepState Map
-- **SIGINT/RISINT News Feed** — Real-time RSS aggregation from multiple intelligence-focused sources
-- **Region Dossier** — Right-click anywhere on the map for:
-  - Country profile (population, capital, languages, currencies, area)
-  - Head of state & government type (Wikidata SPARQL)
-  - Local Wikipedia summary with thumbnail
+- **Globalni incidenti** — GDELT agregacija konfliktnih događaja (poslednjih 8 sati, ~1.000 događaja)
+- **Ukrajinska linija fronta** — Živi GeoJSON fronta sa DeepState Map
+- **SIGINT/RISINT vest feed** — Agregacija RSS u realnom vremenu sa više izvora fokusiranih na obaveštajne podatke
+- **Regionalni dosije** — Desni klik bilo gde na mapi za:
+  - Profil države (stanovništvo, glavni grad, jezici, valute, površina)
+  - Šef države i tip vlade (Wikidata SPARQL)
+  - Lokalni Wikipedia sažetak sa sličicom
 
-### 📷 Surveillance
+### 📷 Nadzor
 
-- **CCTV Mesh** — 2,000+ live traffic cameras from:
+- **CCTV mreža** — 2.000+ živih kamera u saobraćaju sa:
   - 🇬🇧 Transport for London JamCams
   - 🇺🇸 Austin, TX TxDOT
   - 🇺🇸 NYC DOT
   - 🇸🇬 Singapore LTA
-  - Custom URL ingestion
-- **Feed Rendering** — Automatic detection & rendering of video, MJPEG, HLS, embed, satellite tile, and image feeds
-- **Clustered Map Display** — Green dots cluster with count labels, decluster on zoom
+  - Unos prilagođenih URL-ova
+- **Renderovanje izvora** — Automatska detekcija i prikaz video, MJPEG, HLS, embed, satelitskih tile i slikovnih izvora
+- **Grupisani prikaz na mapi** — Zelene tačke se grupišu sa oznakama broja, razgrupišu se pri zumiranju
 
-### 📡 Signal Intelligence
+### 📡 Signalna inteligencija
 
-- **GPS Jamming Detection** — Real-time analysis of aircraft NAC-P (Navigation Accuracy Category) values
-  - Grid-based aggregation identifies interference zones
-  - Red overlay squares with "GPS JAM XX%" severity labels
-- **Radio Intercept Panel** — Scanner-style UI for monitoring communications
+- **Detekcija GPS ometanja** — Analiza u realnom vremenu NAC-P (Navigation Accuracy Category) vrednosti letelica
+  - Agregacija po mreži identifikuje zone interferencije
+  - Crveni kvadrati preklapanja sa oznakama ozbiljnosti „GPS JAM XX%"
+- **Panel presretanja radija** — Skenerski interfejs za praćenje komunikacija
 
-### 🌐 Additional Layers
+### 🌐 Dodatni slojevi
 
-- **Earthquakes (24h)** — USGS real-time earthquake feed with magnitude-scaled markers
-- **Day/Night Cycle** — Solar terminator overlay showing global daylight/darkness
-- **Global Markets Ticker** — Live financial market indices (minimizable)
-- **Measurement Tool** — Point-to-point distance & bearing measurement on the map
+- **Zemljotresi (24h)** — USGS feed zemljotresa u realnom vremenu sa markerima razmerne magnitude
+- **Ciklus dan/noć** — Preklapanje solarnog terminatora prikazuje globalnu dnevnu svetlost/tamu
+- **Tiker globalnih tržišta** — Živi indeksi finansijskih tržišta (može se minimizovati)
+- **Alatka za merenje** — Merenje udaljenosti i azimuta od tačke do tačke na mapi
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Arhitektura
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│                    FRONTEND (Next.js)                 │
+│                  FRONTEND (Next.js)                   │
 │                                                      │
 │  ┌─────────────┐  ┌──────────┐  ┌─────────────────┐ │
-│  │ MapLibre GL │  │ NewsFeed │  │  Control Panels  │ │
-│  │  2D WebGL   │  │  SIGINT  │  │ Layers/Filters   │ │
-│  │  Map Render │  │  Intel   │  │ Markets/Radio    │ │
+│  │ MapLibre GL │  │ Tok vesti│  │ Kontrolni paneli│ │
+│  │ 2D WebGL    │  │ SIGINT   │  │ Slojevi/Filteri │ │
+│  │ Render mape │  │ Intel    │  │ Tržišta/Radio   │ │
 │  └──────┬──────┘  └────┬─────┘  └────────┬────────┘ │
 │         └──────────────┼─────────────────┘           │
-│                        │ REST API (15s fast / 60s slow│
+│                        │ REST API (15s brzo / 60s)    │
 ├────────────────────────┼─────────────────────────────┤
-│                    BACKEND (FastAPI)                   │
+│                  BACKEND (FastAPI)                    │
 │                        │                              │
 │  ┌─────────────────────┼─────────────────────────┐   │
-│  │              Data Fetcher (Scheduler)          │   │
+│  │          Dobavljač podataka (Planer)          │   │
 │  │  ┌──────────┬──────────┬──────────┬─────────┐ │   │
 │  │  │ OpenSky  │ adsb.lol │  N2YO    │  USGS   │ │   │
-│  │  │ Flights  │ Military │ Sats     │ Quakes  │ │   │
+│  │  │  Letovi  │  Vojni   │ Sateliti │ Potresi │ │   │
 │  │  ├──────────┼──────────┼──────────┼─────────┤ │   │
-│  │  │ AIS WS   │ Carrier  │  GDELT   │  CCTV   │ │   │
-│  │  │ Ships    │ Tracker  │ Conflict │ Cameras │ │   │
+│  │  │ AIS WS   │  Nosači  │  GDELT   │  CCTV   │ │   │
+│  │  │ Brodovi  │ Praćenje │  Sukobi  │ Kamere  │ │   │
 │  │  ├──────────┼──────────┼──────────┼─────────┤ │   │
-│  │  │ DeepState│ RSS      │ Region   │  GPS    │ │   │
-│  │  │ Frontline│ Intel    │ Dossier  │ Jamming │ │   │
+│  │  │DeepState │   RSS    │  Regija  │   GPS   │ │   │
+│  │  │  Front   │  Intel   │  Dosije  │Ometanje │ │   │
 │  │  └──────────┴──────────┴──────────┴─────────┘ │   │
 │  └───────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────┘
@@ -114,205 +114,205 @@ Built with **Next.js**, **MapLibre GL**, **FastAPI**, and **Python**, it's desig
 
 ---
 
-## 📊 Data Sources & APIs
+## 📊 Izvori podataka i API-ji
 
-| Source | Data | Update Frequency | API Key Required |
+| Izvor | Podaci | Učestalost ažuriranja | Neophodan API ključ |
 |---|---|---|---|
-| [OpenSky Network](https://opensky-network.org) | Commercial & private flights | ~60s | Optional (anonymous limited) |
-| [adsb.lol](https://adsb.lol) | Military aircraft | ~60s | No |
-| [aisstream.io](https://aisstream.io) | AIS vessel positions | Real-time WebSocket | **Yes** |
-| [N2YO](https://www.n2yo.com) | Satellite orbital positions | ~60s | **Yes** |
-| [USGS Earthquake](https://earthquake.usgs.gov) | Global seismic events | ~60s | No |
-| [GDELT Project](https://www.gdeltproject.org) | Global conflict events | ~6h | No |
-| [DeepState Map](https://deepstatemap.live) | Ukraine frontline | ~30min | No |
-| [Transport for London](https://api.tfl.gov.uk) | London CCTV JamCams | ~5min | No |
-| [TxDOT](https://its.txdot.gov) | Austin TX traffic cameras | ~5min | No |
-| [NYC DOT](https://webcams.nyctmc.org) | NYC traffic cameras | ~5min | No |
-| [Singapore LTA](https://datamall.lta.gov.sg) | Singapore traffic cameras | ~5min | **Yes** |
-| [RestCountries](https://restcountries.com) | Country profile data | On-demand (cached 24h) | No |
-| [Wikidata SPARQL](https://query.wikidata.org) | Head of state data | On-demand (cached 24h) | No |
-| [Wikipedia API](https://en.wikipedia.org/api) | Location summaries & aircraft images | On-demand (cached) | No |
-| [CARTO Basemaps](https://carto.com) | Dark map tiles | Continuous | No |
+| [OpenSky Network](https://opensky-network.org) | Komercijalni i privatni letovi | ~60s | Opciono (anonimno, ograničeno) |
+| [adsb.lol](https://adsb.lol) | Vojni avioni | ~60s | Ne |
+| [aisstream.io](https://aisstream.io) | AIS pozicije plovila | WebSocket u realnom vremenu | **Da** |
+| [N2YO](https://www.n2yo.com) | Orbitalne pozicije satelita | ~60s | **Da** |
+| [USGS Earthquake](https://earthquake.usgs.gov) | Globalni seizmički događaji | ~60s | Ne |
+| [GDELT Project](https://www.gdeltproject.org) | Globalni konfliktni događaji | ~6h | Ne |
+| [DeepState Map](https://deepstatemap.live) | Ukrajinska linija fronta | ~30min | Ne |
+| [Transport for London](https://api.tfl.gov.uk) | London CCTV JamCams | ~5min | Ne |
+| [TxDOT](https://its.txdot.gov) | Kamere u saobraćaju, Austin TX | ~5min | Ne |
+| [NYC DOT](https://webcams.nyctmc.org) | Kamere u saobraćaju, NYC | ~5min | Ne |
+| [Singapore LTA](https://datamall.lta.gov.sg) | Kamere u saobraćaju, Singapur | ~5min | **Da** |
+| [RestCountries](https://restcountries.com) | Profil podaci država | Na zahtev (keširano 24h) | Ne |
+| [Wikidata SPARQL](https://query.wikidata.org) | Podaci o šefu države | Na zahtev (keširano 24h) | Ne |
+| [Wikipedia API](https://en.wikipedia.org/api) | Sažeci lokacija i slike letelica | Na zahtev (keširano) | Ne |
+| [CARTO Basemaps](https://carto.com) | Tamni map tiles | Kontinualno | Ne |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Početak rada
 
-### 📦 Quick Start (No Code Required)
+### 📦 Brzi početak (bez koda)
 
-If you just want to run the dashboard without dealing with terminal commands:
+Ako samo želite da pokrenete kontrolni panel bez komandi u terminalu:
 
-1. Go to the **[Releases](../../releases)** tab on the right side of this GitHub page.
-2. Download the `ShadowBroker_v0.1.zip` file.
-3. Extract the folder to your computer.
-4. **Windows:** Double-click `start.bat`.
-   **Mac/Linux:** Open terminal, type `chmod +x start.sh`, and run `./start.sh`.
-5. It will automatically install everything and launch the dashboard!
+1. Idite na karticu **[Releases (izdanja)](../../releases)** na desnoj strani ove GitHub stranice.
+2. Preuzmite fajl `ShadowBroker_v0.1.zip`.
+3. Raspakujte fasciklu na svoj računar.
+4. **Windows:** Dvaput kliknite `start.bat`.
+   **Mac/Linux:** Otvorite terminal, ukucajte `chmod +x start.sh` i pokrenite `./start.sh`.
+5. Automatski će instalirati sve i pokrenuti kontrolni panel!
 
 ---
 
-### 💻 Developer Setup
+### 💻 Podešavanje za developere
 
-If you want to modify the code or run from source:
+Ako želite da menjate kod ili pokrenete iz izvora:
 
-#### Prerequisites
+#### Preduslovi
 
-- **Node.js** 18+ and **npm**
-- **Python** 3.10+ with `pip`
-- API keys for: `aisstream.io`, `n2yo.com` (and optionally `opensky-network.org`, `lta.gov.sg`)
+- **Node.js** 18+ i **npm**
+- **Python** 3.10+ sa `pip`-om
+- API ključevi za: `aisstream.io`, `n2yo.com` (i opciono `opensky-network.org`, `lta.gov.sg`)
 
-### Installation
+### Instalacija
 
 ```bash
-# Clone the repository
+# Klonirajte repozitorijum
 git clone https://github.com/your-username/shadowbroker.git
 cd shadowbroker/live-risk-dashboard
 
-# Backend setup
+# Podešavanje backend-a
 cd backend
 python -m venv venv
 venv\Scripts\activate        # Windows
 # source venv/bin/activate   # macOS/Linux
 pip install -r requirements.txt
 
-# Create .env with your API keys
+# Kreirajte .env sa svojim API ključevima
 echo "AISSTREAM_API_KEY=your_key_here" >> .env
 echo "N2YO_API_KEY=your_key_here" >> .env
 echo "OPENSKY_USERNAME=your_user" >> .env
 echo "OPENSKY_PASSWORD=your_pass" >> .env
 
-# Frontend setup
+# Podešavanje frontend-a
 cd ../frontend
 npm install
 ```
 
-### Running
+### Pokretanje
 
 ```bash
-# From the frontend directory — starts both frontend & backend concurrently
+# Iz direktorijuma frontend — istovremeno pokreće frontend i backend
 npm run dev
 ```
 
-This starts:
+Ovo pokreće:
 
-- **Next.js** frontend on `http://localhost:3000`
-- **FastAPI** backend on `http://localhost:8000`
+- **Next.js** frontend na `http://localhost:3000`
+- **FastAPI** backend na `http://localhost:8000`
 
 ---
 
-## 🎛️ Data Layers
+## 🎛️ Slojevi podataka
 
-All layers are independently toggleable from the left panel:
+Svi slojevi se nezavisno uključuju/isključuju sa levog panela:
 
-| Layer | Default | Description |
+| Sloj | Podrazumevano | Opis |
 |---|---|---|
-| Commercial Flights | ✅ ON | Airlines, cargo, GA aircraft |
-| Private Flights | ✅ ON | Non-commercial private aircraft |
-| Private Jets | ✅ ON | High-value bizjets with owner data |
-| Military Flights | ✅ ON | Military & government aircraft |
-| Tracked Aircraft | ✅ ON | Special interest watch list |
-| Satellites | ✅ ON | Orbital assets by mission type |
-| Carriers / Mil / Cargo | ✅ ON | Navy carriers, cargo ships, tankers |
-| Civilian Vessels | ❌ OFF | Yachts, fishing, recreational |
-| Cruise / Passenger | ✅ ON | Cruise ships and ferries |
-| Earthquakes (24h) | ✅ ON | USGS seismic events |
-| CCTV Mesh | ❌ OFF | Surveillance camera network |
-| Ukraine Frontline | ✅ ON | Live warfront positions |
-| Global Incidents | ✅ ON | GDELT conflict events |
-| GPS Jamming | ✅ ON | NAC-P degradation zones |
-| Day / Night Cycle | ✅ ON | Solar terminator overlay |
+| Komercijalni letovi | ✅ UKLJ | Avio-kompanije, teret, GA letelice |
+| Privatni letovi | ✅ UKLJ | Nekomercijalne privatne letelice |
+| Privatni džetovi | ✅ UKLJ | Poslovni džetovi više vrednosti sa podacima o vlasniku |
+| Vojni letovi | ✅ UKLJ | Vojne i državne letelice |
+| Praćene letelice | ✅ UKLJ | Specijalna lista posmatranja |
+| Sateliti | ✅ UKLJ | Orbitalna sredstva po tipu misije |
+| Nosaci / vojne / teretne | ✅ UKLJ | Mornarički nosači, teretni brodovi, tankeri |
+| Civilna plovila | ❌ ISKLJ | Jahte, ribarstvo, rekreacija |
+| Kruzeri / putnički | ✅ UKLJ | Kruzeri i trajekte |
+| Zemljotresi (24h) | ✅ UKLJ | USGS seizmički događaji |
+| CCTV mreža | ❌ ISKLJ | Mreža kamera nadzora |
+| Ukrajinska linija fronta | ✅ UKLJ | Pozicije živog fronta |
+| Globalni incidenti | ✅ UKLJ | GDELT konfliktni događaji |
+| GPS ometanje | ✅ UKLJ | Zone NAC-P degradacije |
+| Ciklus dan / noć | ✅ UKLJ | Preklapanje solarnog terminatora |
 
 ---
 
-## 🔧 Performance
+## 🔧 Performanse
 
-The platform is optimized for handling massive real-time datasets:
+Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
 
-- **Gzip Compression** — API payloads compressed ~92% (11.6 MB → 915 KB)
-- **ETag Caching** — `304 Not Modified` responses skip redundant JSON parsing
-- **Viewport Culling** — Only features within the visible map bounds (+20% buffer) are rendered
-- **Clustered Rendering** — Ships, CCTV, and earthquakes use MapLibre clustering to reduce feature count
-- **Debounced Viewport Updates** — 300ms debounce prevents GeoJSON rebuild thrash during pan/zoom
-- **Position Interpolation** — Smooth 10s tick animation between data refreshes
-- **React.memo** — Heavy components wrapped to prevent unnecessary re-renders
-- **Coordinate Precision** — Lat/lng rounded to 5 decimals (~1m) to reduce JSON size
+- **Gzip kompresija** — API podaci kompresovani ~92% (11,6 MB → 915 KB)
+- **ETag keširanje** — Odgovori `304 Not Modified` preskaču redundantno raščlanjivanje JSON-a
+- **Odsecanje po viewportu** — Prikažu se samo objekti unutar vidljivih granica mape (+20% bafera)
+- **Grupisano renderovanje** — Brodovi, CCTV i zemljotresi koriste MapLibre klasterizaciju radi smanjenja broja objekata
+- **Odložena ažuriranja viewporta** — 300ms debounce sprečava nepotrebno pregrađivanje GeoJSON-a tokom pomeranja/zuma
+- **Interpolacija pozicije** — Glatka animacija na 10s između osvežavanja podataka
+- **React.memo** — Teške komponente su omotane radi sprečavanja nepotrebnih ponovnih renderovanja
+- **Preciznost koordinata** — Lat/lng zaokruženi na 5 decimala (~1m) radi smanjenja veličine JSON-a
 
 ---
 
-## 📁 Project Structure
+## 📁 Struktura projekta
 
 ```
 live-risk-dashboard/
 ├── backend/
-│   ├── main.py                     # FastAPI app, middleware, API routes
-│   ├── carrier_cache.json          # Persisted carrier OSINT positions
-│   ├── cctv.db                     # SQLite CCTV camera database
+│   ├── main.py                     # FastAPI aplikacija, midlver, API rute
+│   ├── carrier_cache.json          # Trajne OSINT pozicije nosača
+│   ├── cctv.db                     # SQLite baza CCTV kamera
 │   └── services/
-│       ├── data_fetcher.py         # Core scheduler — fetches all data sources
-│       ├── ais_stream.py           # AIS WebSocket client (25K+ vessels)
-│       ├── carrier_tracker.py      # OSINT carrier position tracker
-│       ├── cctv_pipeline.py        # Multi-source CCTV camera ingestion
-│       ├── geopolitics.py          # GDELT + Ukraine frontline fetcher
-│       ├── region_dossier.py       # Right-click country/city intelligence
-│       ├── radio_intercept.py      # Scanner radio feed integration
-│       ├── network_utils.py        # HTTP client with curl fallback
-│       └── api_settings.py         # API key management
+│       ├── data_fetcher.py         # Glavni planer — dovlaci sve izvore podataka
+│       ├── ais_stream.py           # AIS WebSocket klijent (25K+ plovila)
+│       ├── carrier_tracker.py      # OSINT pratioc pozicija nosača
+│       ├── cctv_pipeline.py        # Unos CCTV kamera sa više izvora
+│       ├── geopolitics.py          # Dovlačenje GDELT + ukrajinske linije fronta
+│       ├── region_dossier.py       # Intel države/grada na desni klik
+│       ├── radio_intercept.py      # Integracija skenerskog radio izvora
+│       ├── network_utils.py        # HTTP klijent sa curl rezervom
+│       └── api_settings.py         # Upravljanje API ključevima
 │
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   └── page.tsx            # Main dashboard — state, polling, layout
+│   │   │   └── page.tsx            # Glavni panel — stanje, upitivanje, raspored
 │   │   └── components/
-│   │       ├── MaplibreViewer.tsx   # Core map — 2,000+ lines, all GeoJSON layers
-│   │       ├── NewsFeed.tsx         # SIGINT feed + entity detail panels
-│   │       ├── WorldviewLeftPanel.tsx   # Data layer toggles
-│   │       ├── WorldviewRightPanel.tsx  # Search + filter sidebar
-│   │       ├── FilterPanel.tsx     # Basic layer filters
-│   │       ├── AdvancedFilterModal.tsx  # Airport/country/owner filtering
-│   │       ├── MapLegend.tsx       # Dynamic legend with all icons
-│   │       ├── MarketsPanel.tsx    # Global financial markets ticker
-│   │       ├── RadioInterceptPanel.tsx # Scanner-style radio panel
-│   │       ├── FindLocateBar.tsx   # Search/locate bar
-│   │       ├── SettingsPanel.tsx   # App settings
-│   │       ├── ScaleBar.tsx        # Map scale indicator
-│   │       ├── WikiImage.tsx       # Wikipedia image fetcher
-│   │       └── ErrorBoundary.tsx   # Crash recovery wrapper
+│   │       ├── MaplibreViewer.tsx   # Jezgro mape — 2.000+ redova, svi GeoJSON slojevi
+│   │       ├── NewsFeed.tsx         # SIGINT izvor + paneli detalja entiteta
+│   │       ├── WorldviewLeftPanel.tsx   # Prekidači slojeva podataka
+│   │       ├── WorldviewRightPanel.tsx  # Panel za pretragu i filtere
+│   │       ├── FilterPanel.tsx     # Osnovni filteri slojeva
+│   │       ├── AdvancedFilterModal.tsx  # Filteri aerodrom/država/vlasnik
+│   │       ├── MapLegend.tsx       # Dinamička legenda sa svim ikonama
+│   │       ├── MarketsPanel.tsx    # Tiker globalnih finansijskih tržišta
+│   │       ├── RadioInterceptPanel.tsx # Radio panel u skenerskom stilu
+│   │       ├── FindLocateBar.tsx   # Traka za pretragu/lokalizaciju
+│   │       ├── SettingsPanel.tsx   # Podešavanja aplikacije
+│   │       ├── ScaleBar.tsx        # Indikator razmere mape
+│   │       ├── WikiImage.tsx       # Dovlačenje Wikipedia slika
+│   │       └── ErrorBoundary.tsx   # Omot za oporavak nakon pada
 │   └── package.json
 ```
 
 ---
 
-## 🔑 Environment Variables
+## 🔑 Promenljive okruženja
 
-Create a `.env` file in the `backend/` directory:
+Kreirajte `.env` fajl u direktorijumu `backend/`:
 
 ```env
-# Required
-AISSTREAM_API_KEY=your_aisstream_key      # Maritime vessel tracking
-N2YO_API_KEY=your_n2yo_key               # Satellite position data
+# Neophodni
+AISSTREAM_API_KEY=your_aisstream_key      # Praćenje pomorskih plovila
+N2YO_API_KEY=your_n2yo_key               # Podaci o pozicijama satelita
 
-# Optional (enhances data quality)
-OPENSKY_CLIENT_ID=your_opensky_client_id  # Higher rate limits for flight data
+# Opcioni (poboljšavaju kvalitet podataka)
+OPENSKY_CLIENT_ID=your_opensky_client_id  # Viši limiti za podatke o letovima
 OPENSKY_CLIENT_SECRET=your_opensky_secret
-LTA_ACCOUNT_KEY=your_lta_key             # Singapore CCTV cameras
+LTA_ACCOUNT_KEY=your_lta_key             # CCTV kamere u Singapuru
 ```
 
 ---
 
-## ⚠️ Disclaimer
+## ⚠️ Odricanje od odgovornosti
 
-This is an **educational and research tool** built entirely on publicly available, open-source intelligence (OSINT) data. No classified, restricted, or non-public data sources are used. Carrier positions are estimates based on public reporting. The military-themed UI is purely aesthetic.
+Ovo je **obrazovni i istraživački alat** napravljen isključivo na javno dostupnim, otvorenim obaveštajnim (OSINT) podacima. Ne koriste se klasifikovani, ograničeni ili nejavni izvori podataka. Pozicije nosača su procene zasnovane na javnom izveštavanju. Vojni izgled korisničkog interfejsa je isključivo estetski.
 
-**Do not use this tool for any operational, military, or intelligence purpose.**
+**Ne koristite ovaj alat u bilo koju operativnu, vojnu ili obaveštajnu svrhu.**
 
 ---
 
-## 📜 License
+## 📜 Licenca
 
-This project is for educational and personal research purposes. See individual API provider terms of service for data usage restrictions.
+Ovaj projekat je namenjen obrazovnim i ličnim istraživačkim svrhama. Pogledajte uslove korišćenja pojedinačnih API pružalaca usluga u vezi sa ograničenjima korišćenja podataka.
 
 ---
 
 <p align="center">
-  <sub>Built with ☕ and too many API calls</sub>
+  <sub>Napravljeno uz ☕ i previše API poziva</sub>
 </p>
