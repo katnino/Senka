@@ -1,8 +1,8 @@
 <p align="center">
-  <h1 align="center"> S E N K A <sub>(ShadowBroker)</sub></h1>
-  <p align="center"><strong>Globalno nadgledanje kretnji | Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
+  <h1 align="center"> S E N K A <sub>(selektivno nadgledanje kretanja)</sub></h1>
+  <p align="center"><strong>Globalno nadgledanje kretnji  Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
   <p align="center">
-    <code> // // NOFORN</code>
+    <code> // // // </code>
   </p>
 </p>
 
