@@ -8,7 +8,8 @@
 
 ---
 
-**Senka** je kontrolni panel za geoprostornu inteligenciju u realnom vremenu koji agregira podatke sa desetina OSINT (obaveštavanje iz otvorenih izvora) izvora i prikazuje ih na objedinjenom interfejsu mape u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
+**Senka** je prerađeni klon OSINT 
+(obaveštavanje iz otvorenih izvora) alata ShadowBroker i kontrolni je panel za geoprostornu inteligenciju u realnom vremenu koji agregira podatke sa desetina izvora i prikazuje ih na objedinjenom interfejsu mape u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
 
 Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele objedinjeni prikaz globalne aktivnosti.
 
