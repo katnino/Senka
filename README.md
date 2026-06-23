@@ -1,22 +1,22 @@
 <p align="center">
-  <h1 align="center">🛰️ S E N K A <sub>(ShadowBroker)</sub></h1>
-  <p align="center"><strong>Globalno presretanje pretnji — Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
+  <h1 align="center"> S E N K A <sub>(ShadowBroker)</sub></h1>
+  <p align="center"><strong>Globalno nadgledanje kretnji | Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
   <p align="center">
-    <code>STROGO TAJNO // SI TK // NOFORN</code>
+    <code> // // NOFORN</code>
   </p>
 </p>
 
 ---
 
-**Senka** (kodni naziv *ShadowBroker*) je kontrolni panel za geoprostornu inteligenciju u realnom vremenu koji agregira žive podatke sa desetina OSINT (obaveštavanje iz otvorenih izvora) izvora i prikazuje ih na objedinjenom interfejsu mape u mračnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje — sve se ažurira u realnom vremenu.
+**Senka** je kontrolni panel za geoprostornu inteligenciju u realnom vremenu koji agregira podatke sa desetina OSINT (obaveštavanje iz otvorenih izvora) izvora i prikazuje ih na objedinjenom interfejsu mape u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
 
 Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele objedinjeni prikaz globalne aktivnosti.
 
 ---
 
-## ✨ Mogućnosti
+##  Mogućnosti
 
-### 🛩️ Praćenje vazduhoplova
+###  Praćenje vazduhoplova
 
 - **Komercijalni letovi** — Pozicije u realnom vremenu preko OpenSky Network mreže (~5.000+ letelica)
 - **Privatne letelice** — Laki GA, turboprop i poslovni džetovi se prate posebno
@@ -27,7 +27,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 - **Klasifikacija letelica** — Oblikom tačne SVG ikone: avioni, turboprop, poslovni džetovi, helikopteri
 - **Detekcija na zemlji** — Letelice ispod 100ft AGL prikazuju se sivim ikonama
 
-### 🚢 Pomorsko praćenje
+###  Pomorsko praćenje
 
 - **AIS tok plovila** — 25.000+ plovila preko aisstream.io WebSocket-a (realno vreme)
 - **Klasifikacija brodova** — Teretni, tankeri, putnički, jahte i vojni tipovi plovila sa ikonama u boji
@@ -38,12 +38,12 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 - **Kruzeri i putnički brodovi** — Posvećen sloj za kruzere i trajekte
 - **Grupisani prikaz** — Brodovi se grupišu pri niskom zumu sa oznakama broja, razgrupišu se pri povećanju zuma
 
-### 🛰️ Svemir i sateliti
+###  Svemir i sateliti
 
 - **Orbitalno praćenje** — Pozicije satelita u realnom vremenu sa N2YO API-ja
-- **Klasifikacija po tipu misije** — Obojeno po misiji: vojno izviđanje (crveno), SAR (cijan), SIGINT (belo), navigacija (plavo), rano upozorenje (magenta), komercijalno snimanje (zeleno), svemirska stanica (zlatno)
+- **Klasifikacija po tipu misije** — Misije u bojama: vojno izviđanje (crveno), SAR (cijan), SIGINT (belo), navigacija (plavo), rano upozorenje (magenta), komercijalno snimanje (zeleno), svemirska stanica (zlatno)
 
-### 🌍 Geopolitika i sukobi
+###  Geopolitika i sukobi
 
 - **Globalni incidenti** — GDELT agregacija konfliktnih događaja (poslednjih 8 sati, ~1.000 događaja)
 - **Ukrajinska linija fronta** — Živi GeoJSON fronta sa DeepState Map
@@ -53,7 +53,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
   - Šef države i tip vlade (Wikidata SPARQL)
   - Lokalni Wikipedia sažetak sa sličicom
 
-### 📷 Nadzor
+###  Nadzor
 
 - **CCTV mreža** — 2.000+ živih kamera u saobraćaju sa:
   - 🇬🇧 Transport for London JamCams
@@ -64,14 +64,14 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 - **Renderovanje izvora** — Automatska detekcija i prikaz video, MJPEG, HLS, embed, satelitskih tile i slikovnih izvora
 - **Grupisani prikaz na mapi** — Zelene tačke se grupišu sa oznakama broja, razgrupišu se pri zumiranju
 
-### 📡 Signalna inteligencija
+###  Signalna inteligencija
 
 - **Detekcija GPS ometanja** — Analiza u realnom vremenu NAC-P (Navigation Accuracy Category) vrednosti letelica
   - Agregacija po mreži identifikuje zone interferencije
   - Crveni kvadrati preklapanja sa oznakama ozbiljnosti „GPS JAM XX%"
 - **Panel presretanja radija** — Skenerski interfejs za praćenje komunikacija
 
-### 🌐 Dodatni slojevi
+###  Dodatni slojevi
 
 - **Zemljotresi (24h)** — USGS feed zemljotresa u realnom vremenu sa markerima razmerne magnitude
 - **Ciklus dan/noć** — Preklapanje solarnog terminatora prikazuje globalnu dnevnu svetlost/tamu
@@ -80,7 +80,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 ---
 
-## 🏗️ Arhitektura
+##  Arhitektura
 
 ```
 ┌──────────────────────────────────────────────────────┐
@@ -114,7 +114,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 ---
 
-## 📊 Izvori podataka i API-ji
+##  Izvori podataka i API-ji
 
 | Izvor | Podaci | Učestalost ažuriranja | Neophodan API ključ |
 |---|---|---|---|
@@ -135,21 +135,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 | [CARTO Basemaps](https://carto.com) | Tamni map tiles | Kontinualno | Ne |
 
 ---
-
-## 🚀 Početak rada
-
-### 📦 Brzi početak (bez koda)
-
-Ako samo želite da pokrenete kontrolni panel bez komandi u terminalu:
-
-1. Idite na karticu **[Releases (izdanja)](../../releases)** na desnoj strani ove GitHub stranice.
-2. Preuzmite fajl `ShadowBroker_v0.1.zip`.
-3. Raspakujte fasciklu na svoj računar.
-4. **Windows:** Dvaput kliknite `start.bat`.
-   **Mac/Linux:** Otvorite terminal, ukucajte `chmod +x start.sh` i pokrenite `./start.sh`.
-5. Automatski će instalirati sve i pokrenuti kontrolni panel!
-
----
+
 
 ### 💻 Podešavanje za developere
 
@@ -200,7 +186,7 @@ Ovo pokreće:
 
 ---
 
-## 🎛️ Slojevi podataka
+##  Slojevi podataka
 
 Svi slojevi se nezavisno uključuju/isključuju sa levog panela:
 
@@ -224,7 +210,7 @@ Svi slojevi se nezavisno uključuju/isključuju sa levog panela:
 
 ---
 
-## 🔧 Performanse
+##  Performanse
 
 Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
 
@@ -239,7 +225,7 @@ Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
 
 ---
 
-## 📁 Struktura projekta
+##  Struktura projekta
 
 ```
 live-risk-dashboard/
@@ -282,7 +268,7 @@ live-risk-dashboard/
 
 ---
 
-## 🔑 Promenljive okruženja
+##  Promenljive okruženja
 
 Kreirajte `.env` fajl u direktorijumu `backend/`:
 
@@ -301,18 +287,18 @@ LTA_ACCOUNT_KEY=your_lta_key             # CCTV kamere u Singapuru
 
 ## ⚠️ Odricanje od odgovornosti
 
-Ovo je **obrazovni i istraživački alat** napravljen isključivo na javno dostupnim, otvorenim obaveštajnim (OSINT) podacima. Ne koriste se klasifikovani, ograničeni ili nejavni izvori podataka. Pozicije nosača su procene zasnovane na javnom izveštavanju. Vojni izgled korisničkog interfejsa je isključivo estetski.
+Ovo je **obrazovni i istraživački alat** napravljen isključivo na javno dostupnim, otvorenim obaveštajnim (OSINT) podacima. Ne koriste se klasifikovani, ograničeni ili tajni izvori podataka. Pozicije nosača su procene zasnovane na javnom izveštavanju. Vojni izgled korisničkog interfejsa je isključivo estetski.
 
 **Ne koristite ovaj alat u bilo koju operativnu, vojnu ili obaveštajnu svrhu.**
 
 ---
 
-## 📜 Licenca
+## Licenca
 
-Ovaj projekat je namenjen obrazovnim i ličnim istraživačkim svrhama. Pogledajte uslove korišćenja pojedinačnih API pružalaca usluga u vezi sa ograničenjima korišćenja podataka.
+Pogledajte uslove korišćenja pojedinačnih API provajdera u vezi sa ograničenjima korišćenja podataka.
 
 ---
 
 <p align="center">
-  <sub>Napravljeno uz ☕ i previše API poziva</sub>
+  <sub>2026</sub>
 </p>
