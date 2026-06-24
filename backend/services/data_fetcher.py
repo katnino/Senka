@@ -2,7 +2,7 @@ import yfinance as yf
 import feedparser
 import requests
 import logging
-from services.network_utils import fetch_with_curl
+from services.network_utils import fetch_with_curl, is_host_paused
 import csv
 import os
 import re
@@ -620,9 +620,13 @@ def fetch_flights():
         
         all_adsb_flights = []
 
-        # Fetch all regions in parallel for ~5x speedup
+        # Fetch regions in parallel (capped) to avoid bursting the host and
+        # triggering rate limits. Spacing between dispatches lets the server
+        # see a steady trickle rather than a 6-wide fan-out every 60s.
         def _fetch_region(r):
             url = f"https://api.adsb.lol/v2/lat/{r['lat']}/lon/{r['lon']}/dist/{r['dist']}"
+            if is_host_paused(url):
+                return []
             try:
                 res = fetch_with_curl(url, timeout=10)
                 if res.status_code == 200:
@@ -632,9 +636,13 @@ def fetch_flights():
                 logger.warning(f"Region fetch failed for lat={r['lat']}: {e}")
             return []
 
-        # Fetch all regions in parallel for maximum speed
-        with concurrent.futures.ThreadPoolExecutor(max_workers=6) as pool:
-            results = pool.map(_fetch_region, regions)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            futures = [pool.submit(_fetch_region, r) for r in regions]
+            results = []
+            for i, fut in enumerate(futures):
+                results.append(fut.result())
+                if i < len(futures) - 1:
+                    time.sleep(0.4)  # stagger — don't hit adsb.lol with a parallel burst
         for region_flights in results:
             all_adsb_flights.extend(region_flights)
 
@@ -1102,6 +1110,12 @@ def fetch_military_flights():
     military_flights = []
     try:
         url = "https://api.adsb.lol/v2/mil"
+        if is_host_paused(url):
+            logger.warning("adsb.lol is rate-limited — skipping military fetch this cycle")
+            if latest_data.get('military_flights'):
+                return
+            latest_data['military_flights'] = military_flights
+            return
         response = fetch_with_curl(url, timeout=10)
         if response.status_code == 200:
             ac = response.json().get('ac', [])

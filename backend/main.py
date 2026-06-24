@@ -143,22 +143,23 @@ from services.network_utils import fetch_with_curl
 @app.get("/api/route/{callsign}")
 async def get_flight_route(callsign: str):
     r = fetch_with_curl("https://api.adsb.lol/api/0/routeset", method="POST", json_data={"planes": [{"callsign": callsign}]}, timeout=10)
-    if r.status_code == 200:
-        data = r.json()
-        route_list = []
-        if isinstance(data, dict):
-            route_list = data.get("value", [])
-        elif isinstance(data, list):
-            route_list = data
-        
-        if route_list and len(route_list) > 0:
-            route = route_list[0]
-            airports = route.get("_airports", [])
-            if len(airports) >= 2:
-                return {
-                    "orig_loc": [airports[0].get("lon", 0), airports[0].get("lat", 0)],
-                    "dest_loc": [airports[-1].get("lon", 0), airports[-1].get("lat", 0)]
-                }
+    if r is None or r.status_code != 200:
+        return {}
+    data = r.json()
+    route_list = []
+    if isinstance(data, dict):
+        route_list = data.get("value", [])
+    elif isinstance(data, list):
+        route_list = data
+
+    if route_list and len(route_list) > 0:
+        route = route_list[0]
+        airports = route.get("_airports", [])
+        if len(airports) >= 2:
+            return {
+                "orig_loc": [airports[0].get("lon", 0), airports[0].get("lat", 0)],
+                "dest_loc": [airports[-1].get("lon", 0), airports[-1].get("lat", 0)]
+            }
     return {}
 
 from services.region_dossier import get_region_dossier

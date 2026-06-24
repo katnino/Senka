@@ -11,7 +11,7 @@
 **Senka** je prerađeni klon OSINT 
 (obaveštavanje iz otvorenih izvora) alata ShadowBroker i kontrolni je panel za geoprostornu inteligenciju u realnom vremenu koji agregira podatke sa desetina izvora i prikazuje ih na objedinjenom interfejsu mape u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
 
-Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele objedinjeni prikaz globalne aktivnosti.
+Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele prikaz globalne aktivnosti na jednom mestu.
 
 ---
 
@@ -36,8 +36,8 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
   - Automatsko prikupljanje GDELT vesti za obaveštajne podatke o kretanju nosača
   - 50+ mapiranja geografskih regija u koordinate
   - Pozicije keširane na disku, automatsko ažuriranje u 00:00 i 12:00 UTC
-- **Kruzeri i putnički brodovi** — Posvećen sloj za kruzere i trajekte
-- **Grupisani prikaz** — Brodovi se grupišu pri niskom zumu sa oznakama broja, razgrupišu se pri povećanju zuma
+- **Kruzeri i putnički brodovi** — Praćenje za kruzere i trajekte
+- **Grupisani prikaz** — Brodovi se grupišu pri malom zumu sa oznakama broja, razgrupišu se pri povećanju zuma
 
 ###  Svemir i sateliti
 
@@ -46,8 +46,8 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 ###  Geopolitika i sukobi
 
-- **Globalni incidenti** — GDELT agregacija konfliktnih događaja (poslednjih 8 sati, ~1.000 događaja)
-- **Ukrajinska linija fronta** — Živi GeoJSON fronta sa DeepState Map
+- **Globalni incidenti** — GDELT prikaz konfliktnih događaja (poslednjih 8 sati, ~1.000 događaja)
+- **Ukrajinska linija fronta** — GeoJSON fronta sa DeepState Map
 - **SIGINT/RISINT vest feed** — Agregacija RSS u realnom vremenu sa više izvora fokusiranih na obaveštajne podatke
 - **Regionalni dosije** — Desni klik bilo gde na mapi za:
   - Profil države (stanovništvo, glavni grad, jezici, valute, površina)
@@ -56,7 +56,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 ###  Nadzor
 
-- **CCTV mreža** — 2.000+ živih kamera u saobraćaju sa:
+- **CCTV mreža** — 2.000+ kamera u saobraćaju sa:
   - 🇬🇧 Transport for London JamCams
   - 🇺🇸 Austin, TX TxDOT
   - 🇺🇸 NYC DOT
@@ -76,7 +76,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 - **Zemljotresi (24h)** — USGS feed zemljotresa u realnom vremenu sa markerima razmerne magnitude
 - **Ciklus dan/noć** — Preklapanje solarnog terminatora prikazuje globalnu dnevnu svetlost/tamu
-- **Tiker globalnih tržišta** — Živi indeksi finansijskih tržišta (može se minimizovati)
+- **Tiker globalnih tržišta** — Indeksi finansijskih tržišta u realnom vremenu (može se minimizovati)
 - **Alatka za merenje** — Merenje udaljenosti i azimuta od tačke do tačke na mapi
 
 ---
@@ -136,7 +136,21 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 | [CARTO Basemaps](https://carto.com) | Tamni map tiles | Kontinualno | Ne |
 
 ---
-
+
+##  Početak rada
+
+###  Brzi početak (bez koda)
+
+Ako samo želite da pokrenete kontrolni panel bez komandi u terminalu:
+
+1. Idite na karticu **[Releases (izdanja)](../../releases)** na desnoj strani ove GitHub stranice.
+2. Preuzmite fajl `ShadowBroker_v0.1.zip`.
+3. Raspakujte fasciklu na svoj računar.
+4. **Windows:** Dvaput kliknite `start.bat`.
+   **Mac/Linux:** Otvorite terminal, ukucajte `chmod +x start.sh` i pokrenite `./start.sh`.
+5. Automatski će instalirati sve i pokrenuti kontrolni panel!
+
+---
 
 ### 💻 Podešavanje za developere
 
@@ -152,8 +166,8 @@ Ako želite da menjate kod ili pokrenete iz izvora:
 
 ```bash
 # Klonirajte repozitorijum
-git clone https://github.com/your-username/shadowbroker.git
-cd shadowbroker/live-risk-dashboard
+git clone https://github.com/katnino/senka.git
+cd senka/live-risk-dashboard
 
 # Podešavanje backend-a
 cd backend
@@ -220,8 +234,8 @@ Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
 - **Odsecanje po viewportu** — Prikažu se samo objekti unutar vidljivih granica mape (+20% bafera)
 - **Grupisano renderovanje** — Brodovi, CCTV i zemljotresi koriste MapLibre klasterizaciju radi smanjenja broja objekata
 - **Odložena ažuriranja viewporta** — 300ms debounce sprečava nepotrebno pregrađivanje GeoJSON-a tokom pomeranja/zuma
-- **Interpolacija pozicije** — Glatka animacija na 10s između osvežavanja podataka
-- **React.memo** — Teške komponente su omotane radi sprečavanja nepotrebnih ponovnih renderovanja
+- **Interpolacija pozicije** — Animacija na 10s između osvežavanja podataka
+- **React.memo** — Zahtevne komponente su omotane radi sprečavanja nepotrebnih ponovnih renderovanja
 - **Preciznost koordinata** — Lat/lng zaokruženi na 5 decimala (~1m) radi smanjenja veličine JSON-a
 
 ---
@@ -235,11 +249,11 @@ live-risk-dashboard/
 │   ├── carrier_cache.json          # Trajne OSINT pozicije nosača
 │   ├── cctv.db                     # SQLite baza CCTV kamera
 │   └── services/
-│       ├── data_fetcher.py         # Glavni planer — dovlaci sve izvore podataka
+│       ├── data_fetcher.py         # Glavni planer: svi izvori podataka
 │       ├── ais_stream.py           # AIS WebSocket klijent (25K+ plovila)
 │       ├── carrier_tracker.py      # OSINT pratioc pozicija nosača
 │       ├── cctv_pipeline.py        # Unos CCTV kamera sa više izvora
-│       ├── geopolitics.py          # Dovlačenje GDELT + ukrajinske linije fronta
+│       ├── geopolitics.py          # GDELT + ukrajinske linije fronta
 │       ├── region_dossier.py       # Intel države/grada na desni klik
 │       ├── radio_intercept.py      # Integracija skenerskog radio izvora
 │       ├── network_utils.py        # HTTP klijent sa curl rezervom
@@ -248,13 +262,13 @@ live-risk-dashboard/
 ├── frontend/
 │   ├── src/
 │   │   ├── app/
-│   │   │   └── page.tsx            # Glavni panel — stanje, upitivanje, raspored
+│   │   │   └── page.tsx            # Glavni panel: stanje, upitivanje, raspored
 │   │   └── components/
-│   │       ├── MaplibreViewer.tsx   # Jezgro mape — 2.000+ redova, svi GeoJSON slojevi
+│   │       ├── MaplibreViewer.tsx   # Jezgro mape: 2.000+ redova, svi GeoJSON slojevi
 │   │       ├── NewsFeed.tsx         # SIGINT izvor + paneli detalja entiteta
-│   │       ├── WorldviewLeftPanel.tsx   # Prekidači slojeva podataka
+│   │       ├── WorldviewLeftPanel.tsx   # Prekidači podataka
 │   │       ├── WorldviewRightPanel.tsx  # Panel za pretragu i filtere
-│   │       ├── FilterPanel.tsx     # Osnovni filteri slojeva
+│   │       ├── FilterPanel.tsx     # Osnovni filteri podataka
 │   │       ├── AdvancedFilterModal.tsx  # Filteri aerodrom/država/vlasnik
 │   │       ├── MapLegend.tsx       # Dinamička legenda sa svim ikonama
 │   │       ├── MarketsPanel.tsx    # Tiker globalnih finansijskih tržišta
@@ -262,7 +276,7 @@ live-risk-dashboard/
 │   │       ├── FindLocateBar.tsx   # Traka za pretragu/lokalizaciju
 │   │       ├── SettingsPanel.tsx   # Podešavanja aplikacije
 │   │       ├── ScaleBar.tsx        # Indikator razmere mape
-│   │       ├── WikiImage.tsx       # Dovlačenje Wikipedia slika
+│   │       ├── WikiImage.tsx       # Wikipedia slike
 │   │       └── ErrorBoundary.tsx   # Omot za oporavak nakon pada
 │   └── package.json
 ```
@@ -271,7 +285,7 @@ live-risk-dashboard/
 
 ##  Promenljive okruženja
 
-Kreirajte `.env` fajl u direktorijumu `backend/`:
+Kreirajte `.env` fajl u folderu `backend/`:
 
 ```env
 # Neophodni
