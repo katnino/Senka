@@ -8,11 +8,11 @@
 
 ---
 
-**Senka** je prerađeni klon OSINT 
-(obaveštavanje iz otvorenih izvora) alata ShadowBroker i kontrolni je panel za geoprostornu inteligenciju u realnom vremenu koji prikuplja podatke sa desetina izvora i prikazuje ih na interfejsu u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
+**Senka** je prerađeni klon rane verzije OSINT 
+(obaveštavanje iz otvorenih izvora) alata ShadowBroker na Srpskom jeziku. U svojoj suštini je kontrolni panel za geoprostornu inteligenciju u realnom vremenu koji prikuplja podatke sa desetina izvora i prikazuje ih na interfejsu u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
 
 Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele prikaz globalne aktivnosti na jednom mestu.
-Projekat je još uvjek u fazi razvoja.
+Projekat je eksperimentalan i još uvjek u fazi razvoja.
 
 ---
 
@@ -293,6 +293,8 @@ Projekat je u fazi razvoja i nekompletan.
 ---
 
 ## Licenca
+
+MIT
 
 Pogledajte uslove korišćenja pojedinačnih API provajdera u vezi sa ograničenjima korišćenja podataka.
 
