@@ -61,7 +61,6 @@ Projekat je eksperimentalan i još uvjek u fazi razvoja.
   - 🇬🇧 Transport for London JamCams
   - 🇺🇸 Austin, TX TxDOT
   - 🇺🇸 NYC DOT
-  - 🇸🇬 Singapore LTA
   - Unos prilagođenih URL-ova
 - **Renderovanje izvora** — Automatska detekcija i prikaz video, MJPEG, HLS, embed, satelitskih tile i slikovnih izvora
 - **Grupisani prikaz na mapi** — Zelene tačke se grupišu sa oznakama broja, razgrupišu se pri zumiranju
@@ -130,7 +129,6 @@ Projekat je eksperimentalan i još uvjek u fazi razvoja.
 | [Transport for London](https://api.tfl.gov.uk) | London CCTV JamCams | ~5min | Ne |
 | [TxDOT](https://its.txdot.gov) | Kamere u saobraćaju, Austin TX | ~5min | Ne |
 | [NYC DOT](https://webcams.nyctmc.org) | Kamere u saobraćaju, NYC | ~5min | Ne |
-| [Singapore LTA](https://datamall.lta.gov.sg) | Kamere u saobraćaju, Singapur | ~5min | **Da** |
 | [RestCountries](https://restcountries.com) | Profil podaci država | Na zahtev (keširano 24h) | Ne |
 | [Wikidata SPARQL](https://query.wikidata.org) | Podaci o šefu države | Na zahtev (keširano 24h) | Ne |
 | [Wikipedia API](https://en.wikipedia.org/api) | Sažeci lokacija i slike letelica | Na zahtev (keširano) | Ne |
@@ -149,7 +147,7 @@ Projekat je eksperimentalan i još uvjek u fazi razvoja.
 ```bash
 # Klonirajte repozitorijum
 git clone https://github.com/katnino/senka.git
-cd senka/live-risk-dashboard
+cd senka
 
 # Podešavanje backend-a
 cd backend
@@ -209,7 +207,7 @@ Svi slojevi se nezavisno uključuju/isključuju sa levog panela:
 
 ##  Performanse
 
-Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
+Platforma je prilagođena obilnoj masi podataka u realnom vremenu:
 
 - **Gzip kompresija** — API podaci kompresovani ~92% (11,6 MB → 915 KB)
 - **ETag keširanje** — Odgovori `304 Not Modified` preskaču redundantno raščlanjivanje JSON-a
@@ -225,7 +223,7 @@ Platforma je optimizovana za obrimu masu podataka u realnom vremenu:
 ##  Struktura projekta
 
 ```
-live-risk-dashboard/
+senka/
 ├── backend/
 │   ├── main.py                     # FastAPI aplikacija, midlver, API rute
 │   ├── carrier_cache.json          # Trajne OSINT pozicije nosača
