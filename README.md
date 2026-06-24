@@ -9,9 +9,10 @@
 ---
 
 **Senka** je prerađeni klon OSINT 
-(obaveštavanje iz otvorenih izvora) alata ShadowBroker i kontrolni je panel za geoprostornu inteligenciju u realnom vremenu koji agregira podatke sa desetina izvora i prikazuje ih na objedinjenom interfejsu mape u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
+(obaveštavanje iz otvorenih izvora) alata ShadowBroker i kontrolni je panel za geoprostornu inteligenciju u realnom vremenu koji prikuplja podatke sa desetina izvora i prikazuje ih na interfejsu u noćnom operativnom stilu. Prati avione, brodove, satelite, zemljotrese, zone sukoba, CCTV mreže, GPS ometanje i aktuelne geopolitičke događaje i sve se ažurira u realnom vremenu.
 
 Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenjena je analitičarima, istraživačima i entuzijastima koji žele prikaz globalne aktivnosti na jednom mestu.
+Projekat je još uvjek u fazi razvoja.
 
 ---
 
@@ -54,7 +55,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
   - Šef države i tip vlade (Wikidata SPARQL)
   - Lokalni Wikipedia sažetak sa sličicom
 
-###  Nadzor
+###  Nadzorne kamere
 
 - **CCTV mreža** — 2.000+ kamera u saobraćaju sa:
   - 🇬🇧 Transport for London JamCams
@@ -72,7 +73,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
   - Crveni kvadrati preklapanja sa oznakama ozbiljnosti „GPS JAM XX%"
 - **Panel presretanja radija** — Skenerski interfejs za praćenje komunikacija
 
-###  Dodatni slojevi
+###  Dodatni podatci
 
 - **Zemljotresi (24h)** — USGS feed zemljotresa u realnom vremenu sa markerima razmerne magnitude
 - **Ciklus dan/noć** — Preklapanje solarnog terminatora prikazuje globalnu dnevnu svetlost/tamu
@@ -115,7 +116,7 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 
 ---
 
-##  Izvori podataka i API-ji
+##  Izvori podataka i API
 
 | Izvor | Podaci | Učestalost ažuriranja | Neophodan API ključ |
 |---|---|---|---|
@@ -136,25 +137,6 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 | [CARTO Basemaps](https://carto.com) | Tamni map tiles | Kontinualno | Ne |
 
 ---
-
-##  Početak rada
-
-###  Brzi početak (bez koda)
-
-Ako samo želite da pokrenete kontrolni panel bez komandi u terminalu:
-
-1. Idite na karticu **[Releases (izdanja)](../../releases)** na desnoj strani ove GitHub stranice.
-2. Preuzmite fajl `ShadowBroker_v0.1.zip`.
-3. Raspakujte fasciklu na svoj računar.
-4. **Windows:** Dvaput kliknite `start.bat`.
-   **Mac/Linux:** Otvorite terminal, ukucajte `chmod +x start.sh` i pokrenite `./start.sh`.
-5. Automatski će instalirati sve i pokrenuti kontrolni panel!
-
----
-
-### 💻 Podešavanje za developere
-
-Ako želite da menjate kod ili pokrenete iz izvora:
 
 #### Preduslovi
 
@@ -305,6 +287,8 @@ LTA_ACCOUNT_KEY=your_lta_key             # CCTV kamere u Singapuru
 Ovo je **obrazovni i istraživački alat** napravljen isključivo na javno dostupnim, otvorenim obaveštajnim (OSINT) podacima. Ne koriste se klasifikovani, ograničeni ili tajni izvori podataka. Pozicije nosača su procene zasnovane na javnom izveštavanju. Vojni izgled korisničkog interfejsa je isključivo estetski.
 
 **Ne koristite ovaj alat u bilo koju operativnu, vojnu ili obaveštajnu svrhu.**
+
+Projekat je u fazi razvoja i nekompletan.
 
 ---
 
