@@ -14,7 +14,21 @@ import os
 logger = logging.getLogger(__name__)
 
 AIS_WS_URL = "wss://stream.aisstream.io/v0/stream"
-API_KEY = os.environ.get("AIS_API_KEY", "75cc39af03c9cc23c90e8a7b3c3bc2b2a507c5fb")
+
+
+def get_ais_key():
+    """Read the AIS Stream API key from the environment on each call.
+
+    Reads lazily (not at import time) so that a key updated via the Settings
+    Panel is picked up on the next proxy reconnect without a process restart.
+    No hardcoded fallback — a missing key is a configuration error.
+    """
+    key = os.environ.get("AISSTREAM_API_KEY")
+    if not key:
+        raise RuntimeError(
+            "AISSTREAM_API_KEY missing from environment — set it in backend/.env"
+        )
+    return key
 
 # AIS vessel type code classification
 # See: https://coast.noaa.gov/data/marinecadastre/ais/VesselTypeCodes2018.pdf
@@ -218,7 +232,7 @@ def _ais_stream_loop():
         try:
             logger.info("Starting Node.js AIS Stream Proxy...")
             process = subprocess.Popen(
-                ['node', proxy_script, API_KEY],
+                ['node', proxy_script, get_ais_key()],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,

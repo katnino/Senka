@@ -29,7 +29,10 @@ from fastapi.middleware.gzip import GZipMiddleware
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # For prototyping, allow all
+    # Explicit origins are required: allow_origins=["*"] combined with
+    # allow_credentials=True is invalid per the Fetch spec and silently breaks
+    # credentialed requests in the browser.
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -4,7 +4,10 @@ Keys are stored in the backend .env file and loaded via python-dotenv.
 """
 import os
 import re
+import logging
 from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 # Path to the backend .env file
 ENV_PATH = Path(__file__).parent.parent / ".env"
@@ -33,7 +36,7 @@ API_REGISTRY = [
     },
     {
         "id": "ais_api_key",
-        "env_key": "AIS_API_KEY",
+        "env_key": "AISSTREAM_API_KEY",
         "name": "AIS Stream",
         "description": "WebSocket API key for real-time Automatic Identification System (AIS) vessel tracking data worldwide.",
         "category": "Maritime",
@@ -172,4 +175,8 @@ def update_api_key(env_key: str, new_value: str) -> bool:
         content = content.rstrip("\n") + f"\n{env_key}={new_value}\n"
 
     ENV_PATH.write_text(content, encoding="utf-8")
+    logger.info(
+        f"API key {env_key} updated in .env and os.environ. "
+        "The new value will be used on the next AIS reconnect or OpenSky token refresh."
+    )
     return True

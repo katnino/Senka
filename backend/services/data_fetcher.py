@@ -6,7 +6,6 @@ from services.network_utils import fetch_with_curl, is_host_paused
 import csv
 import os
 import re
-import random
 import math
 import json
 import time
@@ -39,9 +38,7 @@ _RE_AIRLINE_CODE_2 = re.compile(r'^([A-Z]{3})[A-Z\d]')
 # OpenSky Network API Client (OAuth2)
 # ---------------------------------------------------------------------------
 class OpenSkyClient:
-    def __init__(self, client_id, client_secret):
-        self.client_id = client_id
-        self.client_secret = client_secret
+    def __init__(self):
         self.token = None
         self.expires_at = 0
 
@@ -49,12 +46,20 @@ class OpenSkyClient:
         import time
         if self.token and time.time() < self.expires_at - 60:
             return self.token
-        
+
+        # Read credentials from the environment on each refresh so that
+        # a key updated via the Settings Panel takes effect without restart.
+        client_id = os.environ.get("OPENSKY_CLIENT_ID")
+        client_secret = os.environ.get("OPENSKY_CLIENT_SECRET")
+        if not client_id or not client_secret:
+            logger.warning("OpenSky CLIENT_ID or CLIENT_SECRET not set — skipping auth.")
+            return None
+
         url = "https://auth.opensky-network.org/auth/realms/opensky-network/protocol/openid-connect/token"
         data = {
             "grant_type": "client_credentials",
-            "client_id": self.client_id,
-            "client_secret": self.client_secret
+            "client_id": client_id,
+            "client_secret": client_secret
         }
         try:
             r = requests.post(url, data=data, timeout=10)
@@ -71,10 +76,7 @@ class OpenSkyClient:
         return None
 
 # User provided credentials
-opensky_client = OpenSkyClient(
-    client_id=os.environ.get("OPENSKY_CLIENT_ID", "vancecook-api-client"),
-    client_secret=os.environ.get("OPENSKY_CLIENT_SECRET", "YOUR_OPENSKY_SECRET")
-)
+opensky_client = OpenSkyClient()
 
 # Throttling and caching for OpenSky to observe the 400 req/day limit
 last_opensky_fetch = 0
@@ -229,27 +231,6 @@ def enrich_with_tracked_names(flight: dict) -> dict:
 
     return flight
 
-
-def generate_machine_assessment(title, description, risk_score):
-    if risk_score < 8:
-        return None
-        
-    import random
-    keywords = [word.lower() for word in title.split() + description.split()]
-    
-    assessment = "ANALYSIS: "
-    if any(k in keywords for k in ["strike", "missile", "attack", "bomb", "drone"]):
-        assessment += f"{random.randint(75, 95)}% probability of kinetic escalation within 24 hours. Recommend immediate asset relocation from projected blast radius."
-    elif any(k in keywords for k in ["sanction", "trade", "economy", "tariff", "boycott"]):
-        assessment += f"Significant economic severing detected. {random.randint(60, 85)}% chance of reciprocal sanctions. Global supply chains may experience cascading latency."
-    elif any(k in keywords for k in ["cyber", "hack", "breach", "ddos", "ransomware"]):
-        assessment += f"Asymmetric digital warfare signature matched. {random.randint(80, 99)}% probability of infrastructure probing. Initiate air-gapping protocol for critical nodes."
-    elif any(k in keywords for k in ["troop", "deploy", "border", "navy", "carrier"]):
-        assessment += f"Force projection detected. {random.randint(70, 90)}% probability of theater escalation. Monitor adjacent maritime and airspace for mobilization."
-    else:
-        assessment += f"Anomalous geopolitical shift detected. Confidence interval {random.randint(60, 90)}%. Awaiting further signals intelligence for definitive vector."
-        
-    return assessment
 
 # ---------------------------------------------------------------------------
 # Keyword → coordinate mapping for geocoding news articles
@@ -468,7 +449,6 @@ def fetch_news():
             "coords": top_article["coords"],
             "cluster_count": len(articles),
             "articles": articles,
-            "machine_assessment": generate_machine_assessment(top_article["title"], "", max_risk)
         })
 
     news_items.sort(key=lambda x: x['risk_score'], reverse=True)
@@ -873,16 +853,22 @@ def fetch_flights():
         _now = _time.time()
 
         def _merge_category(new_list, old_list, max_stale_s=120):
-            """Merge new flights with old, keeping stale entries for up to max_stale_s."""
+            """Merge new flights with old, evicting entries not seen within max_stale_s."""
             by_icao = {}
             # Old entries first (will be overwritten by new)
             for f in old_list:
                 icao = f.get('icao24', '')
-                if icao:
-                    f.setdefault('_seen_at', _now)
-                    # Evict if stale for too long
-                    if (_now - f.get('_seen_at', _now)) < max_stale_s:
-                        by_icao[icao] = f
+                if not icao:
+                    continue
+                # Read the original _seen_at before defaulting — otherwise the stale
+                # check below always sees 0 elapsed and never evicts anything.
+                seen = f.get('_seen_at')
+                if seen is None:
+                    f['_seen_at'] = _now
+                    by_icao[icao] = f
+                elif (_now - seen) < max_stale_s:
+                    by_icao[icao] = f
+                # else: stale → drop
             # New entries overwrite old
             for f in new_list:
                 icao = f.get('icao24', '')
@@ -1681,7 +1667,6 @@ def update_fast_data():
         fetch_flights,
         fetch_military_flights,
         fetch_ships,
-        fetch_uavs,
         fetch_satellites,
     ]
     with concurrent.futures.ThreadPoolExecutor(max_workers=len(fast_funcs)) as executor:
