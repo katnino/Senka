@@ -2,7 +2,7 @@
   <h1 align="center"> S E N K A <sub>(selektivno nadgledanje kretanja)</sub></h1>
   <p align="center"><strong>Globalno nadgledanje kretnji  Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
   <p align="center">
-    <code> //eksperimentalno //u ranom razvoju // </code>
+    <code> //eksperimentalno//u ranom razvoju// </code>
   </p>
 </p>
 
