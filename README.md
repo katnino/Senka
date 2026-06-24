@@ -277,7 +277,6 @@ N2YO_API_KEY=your_n2yo_key               # Podaci o pozicijama satelita
 # Opcioni (poboljšavaju kvalitet podataka)
 OPENSKY_CLIENT_ID=your_opensky_client_id  # Viši limiti za podatke o letovima
 OPENSKY_CLIENT_SECRET=your_opensky_secret
-LTA_ACCOUNT_KEY=your_lta_key             # CCTV kamere u Singapuru
 ```
 
 ---
@@ -288,7 +287,7 @@ Ovo je **obrazovni i istraživački alat** napravljen isključivo na javno dostu
 
 **Ne koristite ovaj alat u bilo koju operativnu, vojnu ili obaveštajnu svrhu.**
 
-Projekat je u fazi razvoja i nekompletan.
+Projekat je eksperimentalan i još uvjek u fazi razvoja i nekompletan.
 
 ---
 
