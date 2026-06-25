@@ -302,5 +302,5 @@ Pogledajte uslove korišćenja pojedinačnih API provajdera u vezi sa ograničen
 ---
 
 <p align="center">
-  <sub>2026</sub>
+  <sub>IN MEMORIAM Miroslav Lazanski 2026</sub>
 </p>
