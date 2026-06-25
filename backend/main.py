@@ -38,15 +38,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from services.data_fetcher import update_all_data
+from services.data_fetcher import request_full_refresh
 
 @app.get("/api/refresh")
 async def force_refresh():
-    # Force an immediate synchronous update of the data payload
-    import threading
-    t = threading.Thread(target=update_all_data)
-    t.start()
-    return {"status": "refreshing in background"}
+    # Queue a refresh; requests are serialized but never dropped.
+    return request_full_refresh()
 
 @app.get("/api/live-data")
 async def live_data():

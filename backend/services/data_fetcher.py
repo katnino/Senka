@@ -108,6 +108,12 @@ latest_data = {
 # Thread lock for safe reads/writes to latest_data
 _data_lock = threading.Lock()
 
+# Serialize full refreshes so /api/refresh requests are queued, not dropped.
+_full_refresh_lock = threading.Lock()
+_full_refresh_state_lock = threading.Lock()
+_full_refresh_pending = 0
+_full_refresh_worker_running = False
+
 # ---------------------------------------------------------------------------
 # Plane-Alert DB — load tracked aircraft from CSV on startup
 # ---------------------------------------------------------------------------
@@ -507,14 +513,46 @@ def fetch_oil_prices():
 
 dynamic_routes_cache = {}  # callsign -> {data..., _ts: timestamp}
 routes_fetch_in_progress = False
+_routes_fetch_lock = threading.Lock()
 ROUTES_CACHE_TTL = 7200  # 2 hours
 ROUTES_CACHE_MAX = 5000
 
+
+def _merge_tracked_entries(existing_tracked, fresh_items):
+    """Merge fresh tracked items into the current tracked list by ICAO24."""
+    fresh_map = {}
+    for item in fresh_items:
+        icao = item.get("icao24", "").upper()
+        if icao:
+            fresh_map[icao] = item
+
+    merged = []
+    seen_icaos = set()
+    for old_item in existing_tracked:
+        icao = old_item.get("icao24", "").upper()
+        if icao in fresh_map:
+            fresh = fresh_map[icao]
+            for key in ("alert_category", "alert_operator", "alert_special", "alert_flag"):
+                if key in old_item and key not in fresh:
+                    fresh[key] = old_item[key]
+            merged.append(fresh)
+            seen_icaos.add(icao)
+        else:
+            merged.append(old_item)
+            seen_icaos.add(icao)
+
+    for icao, item in fresh_map.items():
+        if icao not in seen_icaos:
+            merged.append(item)
+
+    return merged
+
 def fetch_routes_background(sampled):
     global dynamic_routes_cache, routes_fetch_in_progress
-    if routes_fetch_in_progress:
-        return
-    routes_fetch_in_progress = True
+    with _routes_fetch_lock:
+        if routes_fetch_in_progress:
+            return
+        routes_fetch_in_progress = True
     
     try:
         # Prune stale entries (older than 2 hours) and cap at max size
@@ -569,7 +607,8 @@ def fetch_routes_background(sampled):
             except Exception:
                 pass
     finally:
-        routes_fetch_in_progress = False
+        with _routes_fetch_lock:
+            routes_fetch_in_progress = False
 
 # Helicopter type codes (backend classification)
 _HELI_TYPES_BACKEND = {
@@ -879,51 +918,22 @@ def fetch_flights():
                     by_icao[id(f)] = f  # no icao — keep as unique
             return list(by_icao.values())
 
-        latest_data['commercial_flights'] = _merge_category(commercial, latest_data.get('commercial_flights', []))
-        latest_data['private_jets'] = _merge_category(private_jets, latest_data.get('private_jets', []))
-        latest_data['private_flights'] = _merge_category(private_ga, latest_data.get('private_flights', []))
-
     # Always write raw flights for GPS jamming analysis (nac_p field)
-    if flights:
-        latest_data['flights'] = flights
-    
     # Merge tracked civilian flights with any tracked military flights
     # CRITICAL: Update positions for already-tracked aircraft on every cycle,
     # not just add new ones — otherwise tracked positions go stale.
-    existing_tracked = latest_data.get('tracked_flights', [])
-    
-    # Build a map of fresh tracked data keyed by icao24
-    fresh_tracked_map = {}
-    for t in tracked:
-        icao = t.get('icao24', '').upper()
-        if icao:
-            fresh_tracked_map[icao] = t
-    
-    # Update existing tracked entries with fresh positions, preserve metadata
-    merged_tracked = []
-    seen_icaos = set()
-    for old_t in existing_tracked:
-        icao = old_t.get('icao24', '').upper()
-        if icao in fresh_tracked_map:
-            # Fresh data available — use it, but preserve any extra metadata from old entry
-            fresh = fresh_tracked_map[icao]
-            for key in ('alert_category', 'alert_operator', 'alert_special', 'alert_flag'):
-                if key in old_t and key not in fresh:
-                    fresh[key] = old_t[key]
-            merged_tracked.append(fresh)
-            seen_icaos.add(icao)
-        else:
-            # No fresh data (military-only tracked, or plane landed/out of range)
-            merged_tracked.append(old_t)
-            seen_icaos.add(icao)
-    
-    # Add any newly-discovered tracked aircraft
-    for icao, t in fresh_tracked_map.items():
-        if icao not in seen_icaos:
-            merged_tracked.append(t)
-    
-    latest_data['tracked_flights'] = merged_tracked
-    logger.info(f"Tracked flights: {len(merged_tracked)} total ({len(fresh_tracked_map)} fresh from civilian)")
+    with _data_lock:
+        latest_data['flights'] = flights if flights else latest_data.get('flights', [])
+        latest_data['commercial_flights'] = _merge_category(commercial, latest_data.get('commercial_flights', []))
+        latest_data['private_jets'] = _merge_category(private_jets, latest_data.get('private_jets', []))
+        latest_data['private_flights'] = _merge_category(private_ga, latest_data.get('private_flights', []))
+        latest_data['tracked_flights'] = _merge_tracked_entries(
+            latest_data.get('tracked_flights', []),
+            tracked,
+        )
+        tracked_count = len(latest_data['tracked_flights'])
+    logger.info(f"Tracked flights: {tracked_count} total ({len(tracked)} fresh from civilian)")
+    existing_tracked = list(latest_data.get('tracked_flights', []))
     
     # -----------------------------------------------------------------------
     # Flight Trail Accumulation — build position history for unrouted flights
@@ -1187,36 +1197,14 @@ def fetch_military_flights():
             tracked_mil.append(mf)
         else:
             remaining_mil.append(mf)
-    latest_data['military_flights'] = remaining_mil
-    
-    # Store tracked military flights — update positions for existing entries
-    existing_tracked = latest_data.get('tracked_flights', [])
-    fresh_mil_map = {}
-    for t in tracked_mil:
-        icao = t.get('icao24', '').upper()
-        if icao:
-            fresh_mil_map[icao] = t
-    
-    # Update existing military tracked entries with fresh positions
-    updated_tracked = []
-    seen_icaos = set()
-    for old_t in existing_tracked:
-        icao = old_t.get('icao24', '').upper()
-        if icao in fresh_mil_map:
-            fresh = fresh_mil_map[icao]
-            for key in ('alert_category', 'alert_operator', 'alert_special', 'alert_flag'):
-                if key in old_t and key not in fresh:
-                    fresh[key] = old_t[key]
-            updated_tracked.append(fresh)
-            seen_icaos.add(icao)
-        else:
-            updated_tracked.append(old_t)
-            seen_icaos.add(icao)
-    for icao, t in fresh_mil_map.items():
-        if icao not in seen_icaos:
-            updated_tracked.append(t)
-    latest_data['tracked_flights'] = updated_tracked
-    logger.info(f"Tracked flights: {len(updated_tracked)} total ({len(tracked_mil)} from military)")
+    with _data_lock:
+        latest_data['military_flights'] = remaining_mil
+        latest_data['tracked_flights'] = _merge_tracked_entries(
+            latest_data.get('tracked_flights', []),
+            tracked_mil,
+        )
+        tracked_count = len(latest_data['tracked_flights'])
+    logger.info(f"Tracked flights: {tracked_count} total ({len(tracked_mil)} from military)")
 
 def fetch_weather():
     try:
@@ -1695,14 +1683,41 @@ def update_slow_data():
 
 def update_all_data():
     """Full update — runs on startup. Fast and slow tiers run IN PARALLEL for fastest startup."""
-    logger.info("Full data update starting (parallel)...")
-    fetch_airports()  # Cached after first download
-    # Run fast + slow in parallel so the user sees data ASAP
-    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
-        f1 = pool.submit(update_fast_data)
-        f2 = pool.submit(update_slow_data)
-        concurrent.futures.wait([f1, f2])
-    logger.info("Full data update complete.")
+    with _full_refresh_lock:
+        logger.info("Full data update starting (parallel)...")
+        fetch_airports()  # Cached after first download
+        # Run fast + slow in parallel so the user sees data ASAP
+        with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
+            f1 = pool.submit(update_fast_data)
+            f2 = pool.submit(update_slow_data)
+            concurrent.futures.wait([f1, f2])
+        logger.info("Full data update complete.")
+
+
+def _run_full_refresh_queue():
+    global _full_refresh_pending, _full_refresh_worker_running
+    while True:
+        with _full_refresh_state_lock:
+            if _full_refresh_pending <= 0:
+                _full_refresh_worker_running = False
+                return
+            _full_refresh_pending -= 1
+        try:
+            update_all_data()
+        except Exception as e:
+            logger.error(f"Queued full refresh failed: {e}")
+
+
+def request_full_refresh():
+    """Queue a full refresh and return immediately."""
+    global _full_refresh_pending, _full_refresh_worker_running
+    with _full_refresh_state_lock:
+        _full_refresh_pending += 1
+        if _full_refresh_worker_running:
+            return {"status": "queued", "pending": _full_refresh_pending}
+        _full_refresh_worker_running = True
+    threading.Thread(target=_run_full_refresh_queue, daemon=True, name="full-refresh-queue").start()
+    return {"status": "queued", "pending": 1}
 
 scheduler = BackgroundScheduler()
 
@@ -1750,5 +1765,6 @@ def stop_scheduler():
     scheduler.shutdown()
 
 def get_latest_data():
-    return latest_data
+    with _data_lock:
+        return dict(latest_data)
 

@@ -20,6 +20,20 @@ def fetch_liveuamap():
     
     all_markers = []
     seen_ids = set()
+
+    def _normalize_markers(value):
+        """Return a list of marker dicts from the different shapes Liveuamap emits."""
+        if value is None:
+            return []
+        if isinstance(value, list):
+            return [item for item in value if isinstance(item, dict)]
+        if isinstance(value, dict):
+            for key in ("markers", "items", "data"):
+                nested = value.get(key)
+                if isinstance(nested, list):
+                    return [item for item in nested if isinstance(item, dict)]
+            return [item for item in value.values() if isinstance(item, dict)]
+        return []
     
     with sync_playwright() as p:
         # Launching with a real user agent to bypass Turnstile
@@ -52,7 +66,6 @@ def fetch_liveuamap():
                     try:
                         ovens_json = page.evaluate("() => typeof ovens !== 'undefined' ? JSON.stringify(ovens) : null")
                         if ovens_json:
-                            markers = json.loads(ovens_json)
                             # process below
                             html = f"var ovens={ovens_json};"
                             m = re.search(r"var\s+ovens=(.*?);", html, re.DOTALL)
@@ -66,7 +79,8 @@ def fetch_liveuamap():
                         json_str = base64.b64decode(urllib.parse.unquote(json_str)).decode('utf-8')
                         
                     try:
-                        markers = json.loads(json_str)
+                        parsed = json.loads(json_str)
+                        markers = _normalize_markers(parsed)
                         for marker in markers:
                             mid = marker.get("id")
                             if mid and mid not in seen_ids:
@@ -82,7 +96,7 @@ def fetch_liveuamap():
                                     "region": region["name"]
                                 })
                     except Exception as e:
-                        logger.error(f"Error parsing JSON for {region['name']}: {e}")
+                        logger.error(f"Error parsing JSON for {region['name']}: {e} (type={type(parsed).__name__ if 'parsed' in locals() else 'unknown'})")
                         
             except Exception as e:
                 logger.error(f"Error scraping Liveuamap {region['name']}: {e}")
