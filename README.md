@@ -1,5 +1,6 @@
 <p align="center">
-  <h1 align="center"> S E N K A <sub>(selektivno nadgledanje kretanja)</sub></h1>
+  <h1 align="center"> S E N K A <sub>[selektivno nadgledanje kretanja]<img width="1094" height="640" alt="Screenshot 2026-06-25 at 08 59 00" src="https://github.com/user-attachments/assets/b2e2147c-2ae5-4c7f-ba46-cbc11a9303dc" />
+</sub></h1>
   <p align="center"><strong>Globalno nadgledanje kretnji  Platforma za geoprostornu inteligenciju u realnom vremenu</strong></p>
   <p align="center">
     <code> //eksperimentalno//u ranom razvoju// </code>
@@ -15,6 +16,9 @@ Napravljena sa **Next.js**, **MapLibre GL**, **FastAPI** i **Python**-om, namenj
 Projekat je eksperimentalan i još uvjek u fazi razvoja.
 
 ---
+<img width="319" height="602" alt="Screenshot 2026-06-25 at 09 00 52" src="https://github.com/user-attachments/assets/21e8391b-bba6-4b50-a0b0-c903f3c1ea23" />
+<img width="321" height="506" alt="Screenshot 2026-06-25 at 09 02 38" src="https://github.com/user-attachments/assets/28920499-1cdc-4a0c-8663-38cf1a2da658" />
+<img width="320" height="598" alt="Screenshot 2026-06-25 at 09 01 40" src="https://github.com/user-attachments/assets/5a75410d-f29a-473f-bec6-73ad0bfbf3a2" />
 
 ##  Mogućnosti
 
