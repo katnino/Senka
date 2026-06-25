@@ -19,7 +19,6 @@ Projekat je eksperimentalan i još uvjek u fazi razvoja.
 <img width="319" height="602" alt="Screenshot 2026-06-25 at 09 00 52" src="https://github.com/user-attachments/assets/21e8391b-bba6-4b50-a0b0-c903f3c1ea23" />
 <img width="321" height="506" alt="Screenshot 2026-06-25 at 09 02 38" src="https://github.com/user-attachments/assets/28920499-1cdc-4a0c-8663-38cf1a2da658" />
 <img width="320" height="598" alt="Screenshot 2026-06-25 at 09 01 40" src="https://github.com/user-attachments/assets/5a75410d-f29a-473f-bec6-73ad0bfbf3a2" />
-<img width="323" height="586" alt="Screenshot 2026-06-25 at 09 00 33" src="https://github.com/user-attachments/assets/64a4fe8f-b0e0-488b-838a-7845f8f213dd" />
 <img width="1361" height="889" alt="Screenshot 2026-06-24 at 13 57 17" src="https://github.com/user-attachments/assets/e12df3d3-86a9-4747-ae46-b17d4a2d0e87" />
 
 
