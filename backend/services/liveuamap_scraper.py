@@ -4,7 +4,7 @@ import base64
 import urllib.parse
 import re
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
+from playwright_stealth import Stealth
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ def fetch_liveuamap():
             color_scheme="dark"
         )
         page = context.new_page()
-        stealth_sync(page)
+        Stealth().apply_stealth_sync(page)
         
         for region in regions:
             try:
