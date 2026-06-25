@@ -362,7 +362,7 @@ def _fetch_navarea_notices() -> Dict[str, dict]:
             raw = fetch_with_curl(url, timeout=10)
             if not raw or raw.status_code != 200:
                 continue
-            data = json.loads(raw)
+            data = raw.json()
 
             # NGA MSI returns a list under various keys depending on type
             notices = (
@@ -436,7 +436,7 @@ def _fetch_gdelt_carrier_news() -> List[dict]:
             raw = fetch_with_curl(url, timeout=8)
             if not raw:
                 continue
-            data = json.loads(raw)
+            data = raw.json()
             articles = data.get("articles", [])
             for art in articles:
                 title = art.get("title", "")
