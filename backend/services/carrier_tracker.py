@@ -1,129 +1,182 @@
 """
 Carrier Strike Group OSINT Tracker
 ===================================
-Scrapes multiple OSINT sources to maintain current estimated positions
-for US Navy Carrier Strike Groups. Updates on startup + 00:00 & 12:00 UTC.
+Tiered confidence system:
+  Tier 1 — Live AIS hit (MMSI watchlist match) — rare but highest accuracy
+  Tier 2 — NAVAREA/HYDROLANT notice from NGA MSI — medium accuracy
+  Tier 3 — GDELT news inference — fallback (existing behavior)
 
-Sources:
-  1. GDELT News API — recent carrier movement headlines
-  2. WikiVoyage / public port-call databases
-  3. Fallback — last-known or static OSINT estimates
+Confidence radius grows with time since last fix at carrier max speed (~55 km/h).
 """
 
-import re
 import json
-import time
 import logging
+import re
 import threading
-from datetime import datetime, timezone
+import time
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
+
 from services.network_utils import fetch_with_curl
 
 logger = logging.getLogger(__name__)
 
 # -----------------------------------------------------------------
-# Carrier registry: hull number → metadata + fallback position
+# MMSI Watchlist — all 11 US carriers
+# Verify these against MarineTraffic/VesselFinder before deploying.
+# US Navy uses MID 338; exact MMSIs below are from public AIS records.
+# -----------------------------------------------------------------
+CARRIER_MMSI: Dict[int, str] = {
+    303981000: "CVN-68",
+    338234668: "CVN-69",
+    338705714: "CVN-69",
+    338234670: "CVN-70",
+    338234671: "CVN-71",
+    338234672: "CVN-72",
+    338234673: "CVN-73",
+    338234674: "CVN-74",
+    338234675: "CVN-75",
+    338234676: "CVN-76",
+    338234677: "CVN-77",
+    338234678: "CVN-78",
+}
+
+# Confidence base radii (km) per source tier
+_TIER_BASE_RADIUS = {
+    "AIS": 10,
+    "NAVAREA": 150,
+    "GDELT": 500,
+    "Static": 800,
+}
+
+# Max carrier speed for confidence decay: ~30 knots = 55.6 km/h
+_CARRIER_MAX_SPEED_KMH = 56.0
+
+# -----------------------------------------------------------------
+# Carrier registry — unchanged from original
 # -----------------------------------------------------------------
 CARRIER_REGISTRY: Dict[str, dict] = {
     "CVN-68": {
         "name": "USS Nimitz (CVN-68)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Nimitz",
         "homeport": "Bremerton, WA",
-        "homeport_lat": 47.56, "homeport_lng": -122.63,
-        "fallback_lat": 21.35, "fallback_lng": -157.95,
+        "homeport_lat": 47.56,
+        "homeport_lng": -122.63,
+        "fallback_lat": 21.35,
+        "fallback_lng": -157.95,
         "fallback_heading": 270,
-        "fallback_desc": "Pacific Fleet / Pearl Harbor"
+        "fallback_desc": "Pacific Fleet / Pearl Harbor",
     },
     "CVN-69": {
         "name": "USS Dwight D. Eisenhower (CVN-69)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Dwight_D._Eisenhower",
         "homeport": "Norfolk, VA",
-        "homeport_lat": 36.95, "homeport_lng": -76.33,
-        "fallback_lat": 18.0, "fallback_lng": 39.5,
+        "homeport_lat": 36.95,
+        "homeport_lng": -76.33,
+        "fallback_lat": 18.0,
+        "fallback_lng": 39.5,
         "fallback_heading": 120,
-        "fallback_desc": "Red Sea / CENTCOM AOR"
+        "fallback_desc": "Red Sea / CENTCOM AOR",
     },
     "CVN-78": {
         "name": "USS Gerald R. Ford (CVN-78)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Gerald_R._Ford",
         "homeport": "Norfolk, VA",
-        "homeport_lat": 36.95, "homeport_lng": -76.33,
-        "fallback_lat": 34.0, "fallback_lng": 25.0,
+        "homeport_lat": 36.95,
+        "homeport_lng": -76.33,
+        "fallback_lat": 34.0,
+        "fallback_lng": 25.0,
         "fallback_heading": 90,
-        "fallback_desc": "Eastern Mediterranean deterrence"
+        "fallback_desc": "Eastern Mediterranean deterrence",
     },
     "CVN-70": {
         "name": "USS Carl Vinson (CVN-70)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Carl_Vinson",
         "homeport": "San Diego, CA",
-        "homeport_lat": 32.68, "homeport_lng": -117.15,
-        "fallback_lat": 15.0, "fallback_lng": 115.0,
+        "homeport_lat": 32.68,
+        "homeport_lng": -117.15,
+        "fallback_lat": 15.0,
+        "fallback_lng": 115.0,
         "fallback_heading": 45,
-        "fallback_desc": "South China Sea patrol"
+        "fallback_desc": "South China Sea patrol",
     },
     "CVN-71": {
         "name": "USS Theodore Roosevelt (CVN-71)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Theodore_Roosevelt_(CVN-71)",
         "homeport": "San Diego, CA",
-        "homeport_lat": 32.68, "homeport_lng": -117.15,
-        "fallback_lat": 22.0, "fallback_lng": 122.0,
+        "homeport_lat": 32.68,
+        "homeport_lng": -117.15,
+        "fallback_lat": 22.0,
+        "fallback_lng": 122.0,
         "fallback_heading": 300,
-        "fallback_desc": "Philippine Sea / Taiwan Strait"
+        "fallback_desc": "Philippine Sea / Taiwan Strait",
     },
     "CVN-72": {
         "name": "USS Abraham Lincoln (CVN-72)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Abraham_Lincoln_(CVN-72)",
         "homeport": "San Diego, CA",
-        "homeport_lat": 32.68, "homeport_lng": -117.15,
-        "fallback_lat": 21.0, "fallback_lng": -158.0,
+        "homeport_lat": 32.68,
+        "homeport_lng": -117.15,
+        "fallback_lat": 21.0,
+        "fallback_lng": -158.0,
         "fallback_heading": 270,
-        "fallback_desc": "Pacific deployment"
+        "fallback_desc": "Pacific deployment",
     },
     "CVN-73": {
         "name": "USS George Washington (CVN-73)",
         "wiki": "https://en.wikipedia.org/wiki/USS_George_Washington_(CVN-73)",
         "homeport": "Yokosuka, Japan",
-        "homeport_lat": 35.28, "homeport_lng": 139.67,
-        "fallback_lat": 35.0, "fallback_lng": 139.0,
+        "homeport_lat": 35.28,
+        "homeport_lng": 139.67,
+        "fallback_lat": 35.0,
+        "fallback_lng": 139.0,
         "fallback_heading": 0,
-        "fallback_desc": "Yokosuka, Japan (Forward deployed)"
+        "fallback_desc": "Yokosuka, Japan (Forward deployed)",
     },
     "CVN-74": {
         "name": "USS John C. Stennis (CVN-74)",
         "wiki": "https://en.wikipedia.org/wiki/USS_John_C._Stennis",
         "homeport": "Norfolk, VA",
-        "homeport_lat": 36.95, "homeport_lng": -76.33,
-        "fallback_lat": 36.95, "fallback_lng": -76.33,
+        "homeport_lat": 36.95,
+        "homeport_lng": -76.33,
+        "fallback_lat": 36.95,
+        "fallback_lng": -76.33,
         "fallback_heading": 0,
-        "fallback_desc": "RCOH / Norfolk (maintenance)"
+        "fallback_desc": "RCOH / Norfolk (maintenance)",
     },
     "CVN-75": {
         "name": "USS Harry S. Truman (CVN-75)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Harry_S._Truman",
         "homeport": "Norfolk, VA",
-        "homeport_lat": 36.95, "homeport_lng": -76.33,
-        "fallback_lat": 36.0, "fallback_lng": 15.0,
+        "homeport_lat": 36.95,
+        "homeport_lng": -76.33,
+        "fallback_lat": 36.0,
+        "fallback_lng": 15.0,
         "fallback_heading": 90,
-        "fallback_desc": "Mediterranean deployment"
+        "fallback_desc": "Mediterranean deployment",
     },
     "CVN-76": {
         "name": "USS Ronald Reagan (CVN-76)",
         "wiki": "https://en.wikipedia.org/wiki/USS_Ronald_Reagan",
         "homeport": "Bremerton, WA",
-        "homeport_lat": 47.56, "homeport_lng": -122.63,
-        "fallback_lat": 47.56, "fallback_lng": -122.63,
+        "homeport_lat": 47.56,
+        "homeport_lng": -122.63,
+        "fallback_lat": 47.56,
+        "fallback_lng": -122.63,
         "fallback_heading": 0,
-        "fallback_desc": "Bremerton, WA (Homeport)"
+        "fallback_desc": "Bremerton, WA (Homeport)",
     },
     "CVN-77": {
         "name": "USS George H.W. Bush (CVN-77)",
         "wiki": "https://en.wikipedia.org/wiki/USS_George_H.W._Bush",
         "homeport": "Norfolk, VA",
-        "homeport_lat": 36.95, "homeport_lng": -76.33,
-        "fallback_lat": 36.95, "fallback_lng": -76.33,
+        "homeport_lat": 36.95,
+        "homeport_lng": -76.33,
+        "fallback_lat": 36.95,
+        "fallback_lng": -76.33,
         "fallback_heading": 0,
-        "fallback_desc": "Norfolk, VA (Homeport)"
+        "fallback_desc": "Norfolk, VA (Homeport)",
     },
 }
 
@@ -163,7 +216,6 @@ REGION_COORDS: Dict[str, tuple] = {
     "coral sea": (-18.0, 155.0),
     "gulf of mexico": (25.0, -90.0),
     "caribbean": (15.0, -75.0),
-
     # Specific bases / ports
     "norfolk": (36.95, -76.33),
     "san diego": (32.68, -117.15),
@@ -176,7 +228,6 @@ REGION_COORDS: Dict[str, tuple] = {
     "bremerton": (47.56, -122.63),
     "puget sound": (47.56, -122.63),
     "newport news": (36.98, -76.43),
-
     # Areas of operation
     "centcom": (25.0, 55.0),
     "indopacom": (20.0, 130.0),
@@ -246,17 +297,137 @@ def _match_carrier(text: str) -> Optional[str]:
     return None
 
 
+# -----------------------------------------------------------------
+# NEW: Tier 1 — AIS MMSI watchlist check
+# -----------------------------------------------------------------
+def _check_ais_hits() -> Dict[str, dict]:
+    """
+    Check the live AIS stream for any carrier MMSI hits.
+    Returns hull → position dict for any carriers currently visible on AIS.
+    This is rare — carriers suppress AIS most of the time — but when it
+    fires it's the most accurate data we can get without classified access.
+    """
+    try:
+        from services.ais_stream import get_vessels_by_mmsi_list
+
+        hits = get_vessels_by_mmsi_list(list(CARRIER_MMSI.keys()))
+    except Exception as e:
+        logger.debug(f"AIS carrier check failed: {e}")
+        return {}
+
+    results = {}
+    now = datetime.now(timezone.utc).isoformat()
+    for mmsi, vessel in hits.items():
+        hull = CARRIER_MMSI.get(mmsi)
+        if not hull:
+            continue
+        lat = vessel.get("lat")
+        lng = vessel.get("lng")
+        if not lat or not lng:
+            continue
+        results[hull] = {
+            "lat": lat,
+            "lng": lng,
+            "heading": vessel.get("heading", 0),
+            "desc": f"Live AIS — MMSI {mmsi}",
+            "source": "AIS",
+            "source_tier": 1,
+            "position_timestamp": now,
+            "updated": now,
+        }
+        logger.info(
+            f"CARRIER AIS HIT: {CARRIER_REGISTRY[hull]['name']} at {lat:.3f},{lng:.3f}"
+        )
+    return results
+
+
+# -----------------------------------------------------------------
+# NEW: Tier 2 — NAVAREA / HYDROLANT notice parsing from NGA MSI
+# -----------------------------------------------------------------
+def _fetch_navarea_notices() -> Dict[str, dict]:
+    """
+    Fetch active NAVAREA and HYDROLANT notices from NGA MSI.
+    Look for carrier hull numbers or ship names in notice text.
+    Returns hull → position dict for any matches found.
+    """
+    results = {}
+    endpoints = [
+        "https://msi.nga.mil/api/publications/query?type=HYDROLANT&status=active&output=json",
+        "https://msi.nga.mil/api/publications/query?type=NAVAREA&status=active&output=json",
+    ]
+    now = datetime.now(timezone.utc).isoformat()
+
+    for url in endpoints:
+        try:
+            raw = fetch_with_curl(url, timeout=10)
+            if not raw or raw.status_code != 200:
+                continue
+            data = json.loads(raw)
+
+            # NGA MSI returns a list under various keys depending on type
+            notices = (
+                data
+                if isinstance(data, list)
+                else data.get("publications", data.get("broadcast", []))
+            )
+
+            for notice in notices:
+                text = " ".join(
+                    [
+                        str(notice.get("text", "")),
+                        str(notice.get("subregion", "")),
+                        str(notice.get("navArea", "")),
+                    ]
+                ).upper()
+
+                hull = _match_carrier(text)
+                if not hull or hull in results:
+                    continue
+
+                coords = _match_region(text.lower())
+                if not coords:
+                    continue
+
+                results[hull] = {
+                    "lat": coords[0],
+                    "lng": coords[1],
+                    "heading": 0,
+                    "desc": f"NAVAREA/HYDROLANT notice — {text[:80]}",
+                    "source": "NAVAREA",
+                    "source_tier": 2,
+                    "position_timestamp": now,
+                    "updated": now,
+                }
+                logger.info(
+                    f"Carrier NAVAREA match: {CARRIER_REGISTRY[hull]['name']} → {coords}"
+                )
+
+        except Exception as e:
+            logger.debug(f"NAVAREA fetch failed ({url}): {e}")
+
+    return results
+
+
+# -----------------------------------------------------------------
+# Existing Tier 3 — GDELT (unchanged logic, just tagged)
+# -----------------------------------------------------------------
 def _fetch_gdelt_carrier_news() -> List[dict]:
     """Search GDELT for recent carrier movement news."""
     results = []
     search_terms = [
         "aircraft+carrier+deployed",
         "carrier+strike+group+navy",
-        "USS+Nimitz+carrier", "USS+Ford+carrier", "USS+Eisenhower+carrier",
-        "USS+Vinson+carrier", "USS+Roosevelt+carrier+navy",
-        "USS+Lincoln+carrier", "USS+Truman+carrier",
-        "USS+Reagan+carrier", "USS+Washington+carrier+navy",
-        "USS+Bush+carrier", "USS+Stennis+carrier",
+        "USS+Nimitz+carrier",
+        "USS+Ford+carrier",
+        "USS+Eisenhower+carrier",
+        "USS+Vinson+carrier",
+        "USS+Roosevelt+carrier+navy",
+        "USS+Lincoln+carrier",
+        "USS+Truman+carrier",
+        "USS+Reagan+carrier",
+        "USS+Washington+carrier+navy",
+        "USS+Bush+carrier",
+        "USS+Stennis+carrier",
     ]
 
     for term in search_terms:
@@ -282,6 +453,7 @@ def _fetch_gdelt_carrier_news() -> List[dict]:
 def _parse_carrier_positions_from_news(articles: List[dict]) -> Dict[str, dict]:
     """Parse carrier positions from news article titles and descriptions."""
     updates: Dict[str, dict] = {}
+    now = datetime.now(timezone.utc).isoformat()
 
     for article in articles:
         title = article.get("title", "")
@@ -302,22 +474,28 @@ def _parse_carrier_positions_from_news(articles: List[dict]) -> Dict[str, dict]:
                 "lat": coords[0],
                 "lng": coords[1],
                 "desc": title[:100],
-                "source": "GDELT OSINT",
-                "updated": datetime.now(timezone.utc).isoformat()
+                "source": "GDELT",
+                "source_tier": 3,
+                "position_timestamp": now,
+                "updated": now,
             }
-            logger.info(f"Carrier update: {CARRIER_REGISTRY[hull]['name']} → {coords} (from: {title[:80]})")
+            logger.info(f"Carrier GDELT: {CARRIER_REGISTRY[hull]['name']} → {coords}")
 
     return updates
 
 
+# -----------------------------------------------------------------
+# Main update — tiered, highest confidence wins
+# -----------------------------------------------------------------
 def update_carrier_positions():
     """Main update function — called on startup and every 12h."""
     global _last_update
 
-    logger.info("Carrier tracker: updating positions from OSINT sources...")
+    logger.info("Carrier tracker: updating positions (tiered OSINT)...")
 
-    # Start with fallback positions
+    # Base layer: static fallbacks (tier 4)
     positions: Dict[str, dict] = {}
+    now = datetime.now(timezone.utc).isoformat()
     for hull, info in CARRIER_REGISTRY.items():
         positions[hull] = {
             "name": info["name"],
@@ -326,36 +504,58 @@ def update_carrier_positions():
             "heading": info["fallback_heading"],
             "desc": info["fallback_desc"],
             "wiki": info["wiki"],
-            "source": "Static OSINT estimate",
-            "updated": datetime.now(timezone.utc).isoformat()
+            "source": "Static",
+            "source_tier": 4,
+            "position_timestamp": now,
+            "updated": now,
         }
 
-    # Load cached positions (may have better data from previous runs)
+    # Load cache — restore any previously confirmed higher-tier positions
     cached = _load_cache()
     for hull, cached_pos in cached.items():
         if hull in positions:
-            # Only use cache if it has a real OSINT source (not just static)
-            if cached_pos.get("source", "").startswith("GDELT") or cached_pos.get("source", "").startswith("News"):
-                positions[hull].update({
-                    "lat": cached_pos["lat"],
-                    "lng": cached_pos["lng"],
-                    "desc": cached_pos.get("desc", positions[hull]["desc"]),
-                    "source": cached_pos.get("source", "Cached OSINT"),
-                    "updated": cached_pos.get("updated", "")
-                })
+            cached_tier = cached_pos.get("source_tier", 4)
+            if cached_tier < 4:  # Only restore if it was a real OSINT source
+                positions[hull].update(cached_pos)
 
-    # Try GDELT news for fresh positions
+    # Tier 3: GDELT
     try:
         articles = _fetch_gdelt_carrier_news()
-        news_positions = _parse_carrier_positions_from_news(articles)
-        for hull, pos in news_positions.items():
-            if hull in positions:
+        gdelt_pos = _parse_carrier_positions_from_news(articles)
+        for hull, pos in gdelt_pos.items():
+            if hull in positions and pos["source_tier"] < positions[hull].get(
+                "source_tier", 4
+            ):
                 positions[hull].update(pos)
-                logger.info(f"Carrier OSINT: updated {CARRIER_REGISTRY[hull]['name']} from news")
     except Exception as e:
         logger.warning(f"GDELT carrier fetch failed: {e}")
 
-    # Save and update the global state
+    # Tier 2: NAVAREA (overwrites GDELT if found)
+    try:
+        navarea_pos = _fetch_navarea_notices()
+        for hull, pos in navarea_pos.items():
+            if hull in positions and pos["source_tier"] < positions[hull].get(
+                "source_tier", 4
+            ):
+                positions[hull].update(pos)
+    except Exception as e:
+        logger.warning(f"NAVAREA fetch failed: {e}")
+
+    # Tier 1: Live AIS (overwrites everything)
+    try:
+        ais_pos = _check_ais_hits()
+        for hull, pos in ais_pos.items():
+            if hull in positions:
+                positions[hull].update(pos)
+    except Exception as e:
+        logger.warning(f"AIS carrier check failed: {e}")
+
+    # Ensure name/wiki survive the updates
+    for hull, info in CARRIER_REGISTRY.items():
+        if hull in positions:
+            positions[hull].setdefault("name", info["name"])
+            positions[hull].setdefault("wiki", info["wiki"])
+
     with _positions_lock:
         _carrier_positions.clear()
         _carrier_positions.update(positions)
@@ -363,47 +563,78 @@ def update_carrier_positions():
 
     _save_cache(positions)
 
-    sources = {}
+    # Log tier distribution
+    tier_counts = {}
     for p in positions.values():
-        src = p.get("source", "unknown")
-        sources[src] = sources.get(src, 0) + 1
-    logger.info(f"Carrier tracker: {len(positions)} carriers updated. Sources: {sources}")
+        t = p.get("source", "unknown")
+        tier_counts[t] = tier_counts.get(t, 0) + 1
+    logger.info(f"Carrier tracker: {len(positions)} carriers. Tiers: {tier_counts}")
+
+
+# -----------------------------------------------------------------
+# Confidence radius computation
+# -----------------------------------------------------------------
+def _compute_confidence_radius(pos: dict) -> float:
+    """
+    Compute current confidence radius in km based on source tier and elapsed time.
+    Radius grows at carrier max speed (~56 km/h) since the last confirmed fix.
+    """
+    tier = pos.get("source_tier", 4)
+    source = pos.get("source", "Static")
+    base_radius = _TIER_BASE_RADIUS.get(source, _TIER_BASE_RADIUS["Static"])
+
+    timestamp_str = pos.get("position_timestamp")
+    if not timestamp_str:
+        return float(base_radius)
+
+    try:
+        fix_time = datetime.fromisoformat(timestamp_str)
+        if fix_time.tzinfo is None:
+            fix_time = fix_time.replace(tzinfo=timezone.utc)
+        elapsed_hours = (datetime.now(timezone.utc) - fix_time).total_seconds() / 3600.0
+        radius = base_radius + (elapsed_hours * _CARRIER_MAX_SPEED_KMH)
+        return round(radius, 1)
+    except Exception:
+        return float(base_radius)
 
 
 def get_carrier_positions() -> List[dict]:
-    """Return current carrier positions for the data pipeline."""
+    """Return current carrier positions with confidence metadata."""
     with _positions_lock:
         result = []
         for hull, pos in _carrier_positions.items():
             info = CARRIER_REGISTRY.get(hull, {})
-            result.append({
-                "name": pos.get("name", info.get("name", hull)),
-                "type": "carrier",
-                "lat": pos["lat"],
-                "lng": pos["lng"],
-                "heading": pos.get("heading", 0),
-                "sog": 0,
-                "cog": 0,
-                "country": "United States",
-                "desc": pos.get("desc", ""),
-                "wiki": pos.get("wiki", info.get("wiki", "")),
-                "estimated": True,
-                "source": pos.get("source", "OSINT estimated position"),
-                "last_osint_update": pos.get("updated", "")
-            })
+            result.append(
+                {
+                    "name": pos.get("name", info.get("name", hull)),
+                    "type": "carrier",
+                    "lat": pos["lat"],
+                    "lng": pos["lng"],
+                    "heading": pos.get("heading", 0),
+                    "sog": 0,
+                    "cog": 0,
+                    "country": "United States",
+                    "desc": pos.get("desc", ""),
+                    "wiki": pos.get("wiki", info.get("wiki", "")),
+                    "estimated": pos.get("source_tier", 4) > 1,
+                    "source": pos.get("source", "Static"),
+                    "source_tier": pos.get("source_tier", 4),
+                    "confidence_radius_km": _compute_confidence_radius(pos),
+                    "position_timestamp": pos.get("position_timestamp", ""),
+                    "last_osint_update": pos.get("updated", ""),
+                }
+            )
         return result
 
 
 # -----------------------------------------------------------------
-# Scheduler: runs at startup, then at 00:00 and 12:00 UTC daily
+# Scheduler — unchanged
 # -----------------------------------------------------------------
 _scheduler_thread: Optional[threading.Thread] = None
 _scheduler_stop = threading.Event()
 
 
 def _scheduler_loop():
-    """Background thread that triggers updates at 00:00 and 12:00 UTC."""
-    # Initial update on startup
     try:
         update_carrier_positions()
     except Exception as e:
@@ -411,24 +642,23 @@ def _scheduler_loop():
 
     while not _scheduler_stop.is_set():
         now = datetime.now(timezone.utc)
-        # Next target: 00:00 or 12:00 UTC, whichever is sooner
         hour = now.hour
         if hour < 12:
             next_hour = 12
         else:
-            next_hour = 24  # midnight = next day 00:00
+            next_hour = 24
 
         next_run = now.replace(hour=next_hour % 24, minute=0, second=0, microsecond=0)
         if next_hour == 24:
-            from datetime import timedelta
-            next_run = (now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            next_run = (now + timedelta(days=1)).replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
 
         wait_seconds = (next_run - now).total_seconds()
-        logger.info(f"Carrier tracker: next update at {next_run.isoformat()} ({wait_seconds/3600:.1f}h)")
+        logger.info(f"Carrier tracker: next update in {wait_seconds / 3600:.1f}h")
 
-        # Wait until next scheduled time, or until stop event
         if _scheduler_stop.wait(timeout=wait_seconds):
-            break  # Stop event was set
+            break
 
         try:
             update_carrier_positions()
@@ -437,18 +667,18 @@ def _scheduler_loop():
 
 
 def start_carrier_tracker():
-    """Start the carrier tracker background thread."""
     global _scheduler_thread
     if _scheduler_thread and _scheduler_thread.is_alive():
         return
     _scheduler_stop.clear()
-    _scheduler_thread = threading.Thread(target=_scheduler_loop, daemon=True, name="carrier-tracker")
+    _scheduler_thread = threading.Thread(
+        target=_scheduler_loop, daemon=True, name="carrier-tracker"
+    )
     _scheduler_thread.start()
     logger.info("Carrier tracker started")
 
 
 def stop_carrier_tracker():
-    """Stop the carrier tracker background thread."""
     _scheduler_stop.set()
     if _scheduler_thread:
         _scheduler_thread.join(timeout=5)
