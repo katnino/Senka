@@ -15,7 +15,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import concurrent.futures
 from sgp4.api import Satrec, WGS72
 from sgp4.api import jday
-from datetime import datetime
+from datetime import datetime, timezone
 from dotenv import load_dotenv
 load_dotenv()
 from services.cctv_pipeline import init_db, TFLJamCamIngestor, LTASingaporeIngestor, AustinTXIngestor, NYCDOTIngestor, get_all_cameras
@@ -964,7 +964,7 @@ def fetch_flights():
         f['trail'] = trail_data['points']
         return 1, hex_id
 
-    now_ts = datetime.utcnow().timestamp()
+    now_ts = datetime.now(timezone.utc).timestamp()
     all_lists = [commercial, private_jets, private_ga, existing_tracked]
     seen_hexes = set()
     trail_count = 0
@@ -1080,7 +1080,7 @@ def fetch_flights():
         logger.error(f"Holding pattern detection error: {e}")
 
     # Update timestamp so the ETag in /api/live-data/fast changes on every fetch cycle
-    latest_data['last_updated'] = datetime.utcnow().isoformat()
+    latest_data['last_updated'] = datetime.now(timezone.utc).isoformat()
 
 def fetch_ships():
     """Fetch real-time AIS vessel data and combine with OSINT carrier positions."""
@@ -1387,7 +1387,7 @@ def fetch_satellites():
         logger.info(f"Satellites: {len(classified)} intel-classified out of {len(data)} total in catalog")
 
         # Propagate orbital elements to get current lat/lng/alt using SGP4
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         jd, fr = jday(now.year, now.month, now.day, now.hour, now.minute, now.second + now.microsecond / 1e6)
         
         for s in all_sats:
@@ -1519,7 +1519,7 @@ def fetch_uavs():
     ]
     
     # Use the current hour and minute to create a continuous slow orbit
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     # 1 full orbit every 10 minutes
     time_factor = ((now.minute % 10) * 60 + now.second) / 600.0  
     angle = time_factor * 2 * math.pi
@@ -1661,7 +1661,7 @@ def update_fast_data():
         futures = [executor.submit(func) for func in fast_funcs]
         concurrent.futures.wait(futures)
     with _data_lock:
-        latest_data['last_updated'] = datetime.utcnow().isoformat()
+        latest_data['last_updated'] = datetime.now(timezone.utc).isoformat()
     logger.info("Fast-tier update complete.")
 
 def update_slow_data():
